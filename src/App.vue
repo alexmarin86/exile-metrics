@@ -10,8 +10,10 @@ import ThemeSwitcher from './components/ThemeSwitcher.vue'
     >
       <nav class="container mx-auto flex justify-between items-center h-full">
         <ul class="flex gap-4">
-          <li><RouterLink class="" to="/">Home</RouterLink></li>
-          <li><RouterLink class="" to="/about">About</RouterLink></li>
+          <li><RouterLink class="text-accent hover:text-accent/80" to="/">Home</RouterLink></li>
+          <li>
+            <RouterLink class="text-accent hover:text-accent/80" to="/about">About</RouterLink>
+          </li>
         </ul>
         <ThemeSwitcher />
       </nav>
