@@ -6,6 +6,12 @@ import HeroSection from '@/components/HeroSection.vue'
 <template>
   <main class="container mx-auto space-y-8">
     <HeroSection />
-    <TestButton />
+    <div class="flex flex-col space-y-4">
+      <TestButton />
+      <TestButton />
+      <TestButton />
+      <TestButton />
+      <TestButton />
+    </div>
   </main>
 </template>
