@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
+import { UserRound } from 'lucide-vue-next'
+import { Button } from '@/components/ui/button'
 </script>
 
 <template>
@@ -9,13 +12,29 @@ import ThemeSwitcher from './components/ThemeSwitcher.vue'
       class="h-20 bg-primary-foreground supports-[backdrop-filter]:bg-primary-foreground/60 z-10 text-primary sticky top-0 backdrop-blur shadow-md shadow-primary/20"
     >
       <nav class="container mx-auto flex justify-between items-center h-full">
-        <ul class="flex gap-4">
-          <li><RouterLink class="text-accent hover:text-accent/80" to="/">Home</RouterLink></li>
+        <ul class="flex gap-4 items-center">
+          <li>
+            <RouterLink class="text-accent hover:text-accent/80" to="/"
+              ><img src="./assets/logo.webp" alt="Logo" class="h-20 w-auto"
+            /></RouterLink>
+          </li>
           <li>
             <RouterLink class="text-accent hover:text-accent/80" to="/about">About</RouterLink>
           </li>
         </ul>
-        <ThemeSwitcher />
+        <div class="flex gap-4 items-center">
+          <SignedOut>
+            <SignInButton>
+              <Button variant="secondary">
+                <UserRound class="h-4 w-4" />
+              </Button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+          <ThemeSwitcher />
+        </div>
       </nav>
     </header>
     <div class="grow py-8 text-foreground">
