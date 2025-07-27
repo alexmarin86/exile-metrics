@@ -13,7 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as farming_sessions from "../farming-sessions.js";
+import type * as farmingSessions from "../farmingSessions.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -24,7 +24,7 @@ import type * as farming_sessions from "../farming-sessions.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "farming-sessions": typeof farming_sessions;
+  farmingSessions: typeof farmingSessions;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
