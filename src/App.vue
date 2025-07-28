@@ -13,13 +13,17 @@ import { Button } from '@/components/ui/button'
     >
       <nav class="container mx-auto flex justify-between items-center h-full">
         <ul class="flex gap-4 items-center">
-          <li>
+          <li class="mr-6">
             <RouterLink class="text-accent hover:text-accent/80" to="/"
               ><img src="./assets/logo.webp" alt="Logo" class="h-20 w-auto"
             /></RouterLink>
           </li>
           <li>
-            <RouterLink class="text-accent hover:text-accent/80" to="/about">About</RouterLink>
+            <RouterLink
+              class="text-primary text-lg underline inline-block translate-y-0 transition-all duration-300 hover:text-primary/80 hover:text-shadow-2xs hover:text-shadow-primary hover:-translate-y-px"
+              to="/sessions/new"
+              >New Session</RouterLink
+            >
           </li>
         </ul>
         <div class="flex gap-4 items-center">
