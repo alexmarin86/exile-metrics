@@ -10,12 +10,34 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from '@/components/ui/select'
+import CostSummary from '@/components/CostSummary.vue'
+
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { watch, ref, computed, onMounted } from 'vue'
 import { Trash2 } from 'lucide-vue-next'
+import { useConvexMutation } from '@convex-vue/core'
+import { api } from '../../convex/_generated/api'
+import { useUser } from '@clerk/vue'
+
+const ChiselNames = z.enum([
+  "Cartographer's Chisel",
+  "Maven's Chisel of Avarice",
+  "Maven's Chisel of Divination",
+  "Maven's Chisel of Procurement",
+  "Maven's Chisel of Proliferation",
+  "Maven's Chisel of Scarabs",
+])
 
 const formSchema = toTypedSchema(
   z.object({
@@ -32,7 +54,7 @@ const formSchema = toTypedSchema(
     numberOfMaps: z.number().min(1).max(1000),
     //chisels info
     isUsingChisels: z.boolean(),
-    chiselName: z.string().min(2).max(50),
+    chiselName: ChiselNames.optional(),
     chiselPrice: z.number().optional(),
     //scarabs info
     isUsingScarabs: z.boolean(),
@@ -75,6 +97,50 @@ const form = useForm({
   },
 })
 
+function calculateTotalCost(values: typeof form.values) {
+  let total = 0
+  const NO_OF_CHISELS = 4
+  const numberOfMaps = values.numberOfMaps ?? 0
+
+  // Map cost
+  if (!values.isSelfFarmed && values.mapCost) {
+    total += values.mapCost * numberOfMaps
+  }
+
+  // Chisel cost
+  if (values.isUsingChisels && values.chiselPrice) {
+    total += values.chiselPrice * NO_OF_CHISELS * numberOfMaps
+  }
+
+  // Scarabs
+  if (values.isUsingScarabs && values.scarabs?.length) {
+    for (const scarab of values.scarabs) {
+      total += scarab.price * scarab.quantity * numberOfMaps
+    }
+  }
+
+  // Map craft
+  if (values.isUsingMapCraft && values.mapCraftPrice) {
+    total += values.mapCraftPrice * numberOfMaps
+  }
+
+  return total
+}
+
+const { isSignedIn, user, isLoaded } = useUser()
+
+const {
+  isLoading,
+  error,
+  mutate: addSession,
+} = useConvexMutation(api['farmingSessions'].addNewSession, {
+  onSuccess: (data) => {
+    console.log('Session added successfully!', data)
+  },
+  onError: (error) => {
+    console.error('Error adding session:', error)
+  },
+})
 const onSubmit = form.handleSubmit((values) => {
   const totalQuantity = values.scarabs.reduce((sum, s) => sum + s.quantity, 0)
   if (totalQuantity > 5) {
@@ -82,6 +148,46 @@ const onSubmit = form.handleSubmit((values) => {
     return
   }
   console.log('Form submitted!', values)
+  if (!isSignedIn) {
+    alert('Please sign in to create a session.')
+    return
+  }
+  if (!isLoaded) {
+    alert('Please wait for the user data to load.')
+    return
+  }
+  if (!user) {
+    alert('User data not available.')
+    return
+  }
+  if (!user.value?.id) {
+    alert('User ID not available.')
+    return
+  }
+  addSession({
+    userId: user.value.id,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    mapName: values.mapName,
+    isRandomMap: values.isRandomMap,
+    isOriginator: values.isOriginator,
+    isSelfFarmed: values.isSelfFarmed,
+    mapCost: values.mapCost,
+    numberOfMaps: values.numberOfMaps,
+    isUsingChisels: values.isUsingChisels,
+    chiselName: values.chiselName,
+    chiselPrice: values.chiselPrice,
+    isUsingScarabs: values.isUsingScarabs,
+    scarabs: values.scarabs,
+    isUsingMapCraft: values.isUsingMapCraft,
+    mapCraftName: values.mapCraftName,
+    mapCraftPrice: values.mapCraftPrice,
+    isConcluded: false,
+    sessionDescription: values.sessionDescription,
+    sessionName: values.sessionName,
+    sessionNotes: values.sessionNotes ?? '',
+    totalCost: calculateTotalCost(values),
+  })
 })
 
 const scarabs = ref(form.values.scarabs)
@@ -127,175 +233,121 @@ onMounted(() => {
 </script>
 
 <template>
-  <form @submit="onSubmit">
-    <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:gap-12 mb-12">
-      <div class="space-y-4">
-        <h2 class="text-xl font-bold">Session info</h2>
-        <FormField v-slot="{ componentField }" name="sessionName">
-          <FormItem>
-            <FormLabel>Session Name</FormLabel>
-            <FormControl>
-              <Input type="text" placeholder="big exiles..." v-bind="componentField" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="sessionDescription">
-          <FormItem>
-            <FormLabel>Session Description</FormLabel>
-            <FormControl>
-              <Textarea
-                v-bind="componentField"
-                placeholder="Strategy relies on scarab x to farm..."
-                class="lg:h-36"
-              />
-            </FormControl>
-            <FormDescription>
-              Enter a brief description of the farming strategy you're using.
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="sessionNotes">
-          <FormItem>
-            <FormLabel>Session Notes</FormLabel>
-            <FormControl>
-              <Textarea
-                v-bind="componentField"
-                placeholder="Running this with a support so the proceeds will be split..."
-                class="lg:h-36"
-              />
-            </FormControl>
-            <FormDescription>
-              Additional notes about the farming strategy. If nothing comes to mind, don't worry,
-              you'll be able to edit this later.
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-      </div>
-      <div class="space-y-4">
-        <h2 class="text-xl font-bold">Map info</h2>
-        <FormField v-slot="{ value, handleChange }" name="isRandomMap">
-          <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div class="space-y-0.5">
-              <FormLabel class="text-base">Random Map</FormLabel>
-              <FormDescription>
-                Mark this if you're not farming a single map type but are instead rotating through
-                many (such as Destructive Play).
-                <strong>This will disable the map name field.</strong>
-              </FormDescription>
-            </div>
-            <FormControl>
-              <Switch :model-value="value" @update:model-value="handleChange" />
-            </FormControl>
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="mapName">
-          <FormItem>
-            <FormLabel>Map Name</FormLabel>
-            <FormControl>
-              <Input
-                type="text"
-                placeholder="Canyon..."
-                v-bind="componentField"
-                :disabled="form.values.isRandomMap"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ value, handleChange }" name="isOriginator">
-          <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div class="space-y-0.5">
-              <FormLabel class="text-base">Originator</FormLabel>
-              <FormDescription>
-                Mark this if your maps will be influenced by the Originator.
-              </FormDescription>
-            </div>
-            <FormControl>
-              <Switch :model-value="value" @update:model-value="handleChange" />
-            </FormControl>
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ value, handleChange }" name="isSelfFarmed">
-          <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div class="space-y-0.5">
-              <FormLabel class="text-base">Is the map self-farmed?</FormLabel>
-              <FormDescription>
-                Mark this if you don't want to take into account the map cost.
-                <strong>This will disable the map cost field.</strong>
-              </FormDescription>
-            </div>
-            <FormControl>
-              <Switch :model-value="value" @update:model-value="handleChange" />
-            </FormControl>
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="mapCost">
-          <FormItem>
-            <FormLabel>Cost per map in chaos</FormLabel>
-            <FormControl>
-              <Input
-                type="number"
-                placeholder="10"
-                v-bind="componentField"
-                :disabled="form.values.isSelfFarmed"
-                step="0.1"
-                min="0.1"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-        <FormField v-slot="{ componentField }" name="numberOfMaps">
-          <FormItem>
-            <FormLabel>Number of maps for the session</FormLabel>
-            <FormControl>
-              <Input type="number" placeholder="10" v-bind="componentField" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-      </div>
-      <div class="space-y-4">
-        <h2 class="text-xl font-bold">Chisels and map craft info</h2>
-        <FormField v-slot="{ value, handleChange }" name="isUsingChisels">
-          <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div class="space-y-0.5">
-              <FormLabel class="text-base">Are you using chisels?</FormLabel>
-              <FormDescription>
-                Unmarking this will disable the chisels related fields.
-              </FormDescription>
-            </div>
-            <FormControl>
-              <Switch :model-value="value" @update:model-value="handleChange" />
-            </FormControl>
-          </FormItem>
-        </FormField>
-        <div class="grid grid-cols-2 gap-4">
-          <FormField v-slot="{ componentField }" name="chiselName">
+  <div class="grid gap-6 grid-cols-1 lg:grid-cols-3">
+    <form @submit="onSubmit" class="lg:col-span-2">
+      <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:gap-12 mb-12">
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold">Session info</h2>
+          <FormField v-slot="{ componentField }" name="sessionName">
             <FormItem>
-              <FormLabel>Chisel Name</FormLabel>
+              <FormLabel>Session Name</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="big exiles..." v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="sessionDescription">
+            <FormItem>
+              <FormLabel>Session Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  v-bind="componentField"
+                  placeholder="Strategy relies on scarab x to farm..."
+                  class="lg:h-36"
+                />
+              </FormControl>
+              <FormDescription>
+                Enter a brief description of the farming strategy you're using.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="sessionNotes">
+            <FormItem>
+              <FormLabel>Session Notes</FormLabel>
+              <FormControl>
+                <Textarea
+                  v-bind="componentField"
+                  placeholder="Running this with a support so the proceeds will be split..."
+                  class="lg:h-36"
+                />
+              </FormControl>
+              <FormDescription>
+                Additional notes about the farming strategy. If nothing comes to mind, don't worry,
+                you'll be able to edit this later.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold">Map info</h2>
+          <FormField v-slot="{ value, handleChange }" name="isRandomMap">
+            <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div class="space-y-0.5">
+                <FormLabel class="text-base">Random Map</FormLabel>
+                <FormDescription>
+                  Mark this if you're not farming a single map type but are instead rotating through
+                  many (such as Destructive Play).
+                  <strong>This will disable the map name field.</strong>
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch :model-value="value" @update:model-value="handleChange" />
+              </FormControl>
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="mapName">
+            <FormItem>
+              <FormLabel>Map Name</FormLabel>
               <FormControl>
                 <Input
                   type="text"
+                  placeholder="Canyon..."
                   v-bind="componentField"
-                  :disabled="!form.values.isUsingChisels"
+                  :disabled="form.values.isRandomMap"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="chiselPrice">
+          <FormField v-slot="{ value, handleChange }" name="isOriginator">
+            <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div class="space-y-0.5">
+                <FormLabel class="text-base">Originator</FormLabel>
+                <FormDescription>
+                  Mark this if your maps will be influenced by the Originator.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch :model-value="value" @update:model-value="handleChange" />
+              </FormControl>
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ value, handleChange }" name="isSelfFarmed">
+            <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div class="space-y-0.5">
+                <FormLabel class="text-base">Is the map self-farmed?</FormLabel>
+                <FormDescription>
+                  Mark this if you don't want to take into account the map cost.
+                  <strong>This will disable the map cost field.</strong>
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch :model-value="value" @update:model-value="handleChange" />
+              </FormControl>
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="mapCost">
             <FormItem>
-              <FormLabel>Chisel Price per Unit</FormLabel>
+              <FormLabel>Cost per map in chaos</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   placeholder="10"
                   v-bind="componentField"
-                  :disabled="!form.values.isUsingChisels"
+                  :disabled="form.values.isSelfFarmed"
                   step="0.1"
                   min="0.1"
                 />
@@ -303,116 +355,199 @@ onMounted(() => {
               <FormMessage />
             </FormItem>
           </FormField>
-        </div>
-        <FormField v-slot="{ value, handleChange }" name="isUsingMapCraft">
-          <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div class="space-y-0.5">
-              <FormLabel class="text-base">Are you using a map device craft?</FormLabel>
-              <FormDescription>
-                Unmarking this will disable the map craft related fields.
-              </FormDescription>
-            </div>
-            <FormControl>
-              <Switch :model-value="value" @update:model-value="handleChange" />
-            </FormControl>
-          </FormItem>
-        </FormField>
-        <div class="grid grid-cols-2 gap-4">
-          <FormField v-slot="{ componentField }" name="mapCraftName">
+          <FormField v-slot="{ componentField }" name="numberOfMaps">
             <FormItem>
-              <FormLabel>Map Craft Name</FormLabel>
+              <FormLabel>Number of maps for the session</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  v-bind="componentField"
-                  placeholder="Anarchy..."
-                  :disabled="!form.values.isUsingMapCraft"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-          <FormField v-slot="{ componentField }" name="chiselPrice">
-            <FormItem>
-              <FormLabel>Map Craft Price</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="10"
-                  v-bind="componentField"
-                  :disabled="!form.values.isUsingMapCraft"
-                />
+                <Input type="number" placeholder="10" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
         </div>
-      </div>
-      <div class="space-y-4">
-        <h2 class="text-xl font-bold">Scarabs info</h2>
-        <FormField v-slot="{ value, handleChange }" name="isUsingScarabs">
-          <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
-            <div class="space-y-0.5">
-              <FormLabel class="text-base">Are you using scarabs or fragments?</FormLabel>
-              <FormDescription>
-                Unmarking this will disable scarab related fields and button.
-              </FormDescription>
-            </div>
-            <FormControl>
-              <Switch :model-value="value" @update:model-value="handleChange" />
-            </FormControl>
-          </FormItem>
-        </FormField>
-        <div
-          v-for="(scarab, index) in form.values.scarabs"
-          :key="index"
-          class="flex gap-4 items-end"
-        >
-          <div class="grid grid-cols-3 gap-4">
-            <FormField :name="`scarabs[${index}].name`" v-slot="{ componentField }">
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold">Chisels and map craft info</h2>
+          <FormField v-slot="{ value, handleChange }" name="isUsingChisels">
+            <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div class="space-y-0.5">
+                <FormLabel class="text-base">Are you using chisels?</FormLabel>
+                <FormDescription>
+                  Unmarking this will disable the chisels related fields.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch :model-value="value" @update:model-value="handleChange" />
+              </FormControl>
+            </FormItem>
+          </FormField>
+          <div class="grid grid-cols-2 gap-4">
+            <FormField v-slot="{ componentField }" name="chiselName">
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Chisel Type</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" placeholder="Kalguuran Scarab" />
+                  <Select v-bind="componentField" :disabled="!form.values.isUsingChisels">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a chisel" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="Cartographer's Chisel">
+                          Cartographer's Chisel
+                        </SelectItem>
+                        <SelectItem value="Maven's Chisel of Avarice">
+                          Maven's Chisel of Avarice
+                        </SelectItem>
+                        <SelectItem value="Maven's Chisel of Divination">
+                          Maven's Chisel of Divination
+                        </SelectItem>
+                        <SelectItem value="Maven's Chisel of Procurement">
+                          Maven's Chisel of Procurement
+                        </SelectItem>
+                        <SelectItem value="Maven's Chisel of Proliferation">
+                          Maven's Chisel of Proliferation
+                        </SelectItem>
+                        <SelectItem value="Maven's Chisel of Scarabs">
+                          Maven's Chisel of Scarabs
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
-
-            <FormField :name="`scarabs[${index}].quantity`" v-slot="{ componentField }">
+            <FormField v-slot="{ componentField }" name="chiselPrice">
               <FormItem>
-                <FormLabel>Quantity</FormLabel>
+                <FormLabel>Chisel Price per Unit</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" type="number" min="1" max="5" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField :name="`scarabs[${index}].price`" v-slot="{ componentField }">
-              <FormItem>
-                <FormLabel>Price</FormLabel>
-                <FormControl>
-                  <Input type="number" min="0.1" step="0.1" v-bind="componentField" />
+                  <Input
+                    type="number"
+                    placeholder="10"
+                    v-bind="componentField"
+                    :disabled="!form.values.isUsingChisels"
+                    step="0.01"
+                    min="0.1"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             </FormField>
           </div>
-          <Button type="button" variant="destructive" @click="removeScarabRow(index)">
-            <Trash2 />
-            <span class="sr-only">Remove</span>
+          <FormField v-slot="{ value, handleChange }" name="isUsingMapCraft">
+            <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div class="space-y-0.5">
+                <FormLabel class="text-base">Are you using a map device craft?</FormLabel>
+                <FormDescription>
+                  Unmarking this will disable the map craft related fields.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch :model-value="value" @update:model-value="handleChange" />
+              </FormControl>
+            </FormItem>
+          </FormField>
+          <div class="grid grid-cols-2 gap-4">
+            <FormField v-slot="{ componentField }" name="mapCraftName">
+              <FormItem>
+                <FormLabel>Map Craft Name</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    v-bind="componentField"
+                    placeholder="Anarchy..."
+                    :disabled="!form.values.isUsingMapCraft"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+            <FormField v-slot="{ componentField }" name="mapCraftPrice">
+              <FormItem>
+                <FormLabel>Map Craft Price</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="10"
+                    step="1"
+                    v-bind="componentField"
+                    :disabled="!form.values.isUsingMapCraft"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-xl font-bold">Scarabs info</h2>
+          <FormField v-slot="{ value, handleChange }" name="isUsingScarabs">
+            <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div class="space-y-0.5">
+                <FormLabel class="text-base">Are you using scarabs or fragments?</FormLabel>
+                <FormDescription>
+                  Unmarking this will disable scarab related fields and button.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch :model-value="value" @update:model-value="handleChange" />
+              </FormControl>
+            </FormItem>
+          </FormField>
+          <div
+            v-for="(scarab, index) in form.values.scarabs"
+            :key="index"
+            class="flex gap-4 items-end"
+          >
+            <div class="grid grid-cols-3 gap-4">
+              <FormField :name="`scarabs[${index}].name`" v-slot="{ componentField }">
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input v-bind="componentField" placeholder="Kalguuran Scarab" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField :name="`scarabs[${index}].quantity`" v-slot="{ componentField }">
+                <FormItem>
+                  <FormLabel>Quantity</FormLabel>
+                  <FormControl>
+                    <Input v-bind="componentField" type="number" min="1" max="5" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField :name="`scarabs[${index}].price`" v-slot="{ componentField }">
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input type="number" min="0.1" step="0.1" v-bind="componentField" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            </div>
+            <Button type="button" variant="destructive" @click="removeScarabRow(index)">
+              <Trash2 />
+              <span class="sr-only">Remove</span>
+            </Button>
+          </div>
+          <Button
+            type="button"
+            @click="addScarabRow"
+            :disabled="!form.values.isUsingScarabs || totalScarabQuantity >= 5"
+          >
+            Add Scarab Row
           </Button>
         </div>
-        <Button
-          type="button"
-          @click="addScarabRow"
-          :disabled="!form.values.isUsingScarabs || totalScarabQuantity >= 5"
-        >
-          Add Scarab Row
-        </Button>
       </div>
-    </div>
-    <Button type="submit" class="ml-auto mr-6 block">Submit</Button>
-  </form>
+      <Button type="submit" class="ml-auto mr-6 block" v-if="isLoading" disabled
+        >Submitting...</Button
+      >
+      <Button type="submit" class="ml-auto mr-6 block" v-else>Submit</Button>
+    </form>
+    <CostSummary :values="form.values" />
+  </div>
 </template>

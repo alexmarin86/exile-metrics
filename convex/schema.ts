@@ -1,15 +1,19 @@
+import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
-import { mutation, query } from './_generated/server'
 
-export const get = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query('FarmingSession').collect()
-  },
-})
+/* chisel array:
+const CHISELS = [
+  "Cartographer's Chisel",
+  "Maven's Chisel of Avarice",
+  "Maven's Chisel of Divination",
+  "Maven's Chisel of Procurement",
+  "Maven's Chisel of Proliferation",
+  "Maven's Chisel of Scarabs",
+]
+*/
 
-export const addNewSession = mutation({
-  args: {
+export default defineSchema({
+  FarmingSession: defineTable({
     userId: v.string(),
     // session info
     sessionName: v.string(),
@@ -56,9 +60,5 @@ export const addNewSession = mutation({
     isUsingMapCraft: v.boolean(),
     mapCraftName: v.optional(v.string()),
     mapCraftPrice: v.optional(v.float64()),
-  },
-  handler: async (ctx, args) => {
-    const farmingSessionId = await ctx.db.insert('FarmingSession', args)
-    return farmingSessionId
-  },
+  }),
 })
