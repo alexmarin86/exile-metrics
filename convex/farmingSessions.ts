@@ -62,3 +62,14 @@ export const addNewSession = mutation({
     return farmingSessionId
   },
 })
+
+export const getFarmingSessionById = query({
+  args: {
+    farmingSessionId: v.id('FarmingSession'),
+  },
+  handler: async (ctx, args) => {
+    const { farmingSessionId } = args
+    const farmingSession = await ctx.db.get(farmingSessionId)
+    return farmingSession
+  },
+})

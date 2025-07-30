@@ -60,5 +60,5 @@ export default defineSchema({
     isUsingMapCraft: v.boolean(),
     mapCraftName: v.optional(v.string()),
     mapCraftPrice: v.optional(v.float64()),
-  }),
+  }).index('by_user_id', ['userId']),
 })
