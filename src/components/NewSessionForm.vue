@@ -187,6 +187,7 @@ function calculateTotalCost(values: typeof form.values) {
   // Scarabs
   if (values.isUsingScarabs && values.scarabs?.length) {
     for (const scarab of values.scarabs) {
+      if (!scarab.price || !scarab.quantity) return
       total += scarab.price * scarab.quantity * numberOfMaps
     }
   }

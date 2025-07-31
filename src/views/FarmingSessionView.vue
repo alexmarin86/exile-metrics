@@ -18,9 +18,17 @@ const sessionId = rawId as Id<'FarmingSession'>
 const { user, isLoaded } = useUser()
 const userId = computed(() => user.value?.id)
 
+const queryArgs = computed(() => ({
+  farmingSessionId: sessionId,
+  userId: user.value?.id ?? '',
+}))
+
 const { data: sessionData, isLoading } = useConvexQuery(
-  api['farmingSessions'].getFarmingSessionById,
-  { farmingSessionId: sessionId },
+  api.farmingSessions.getFarmingSessionByIdAndUser,
+  queryArgs,
+  {
+    enabled: computed(() => isLoaded && !!user.value?.id),
+  },
 )
 
 const isWorking = computed(() => !isLoaded.value || isLoading.value)

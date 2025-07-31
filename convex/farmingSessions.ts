@@ -1,13 +1,6 @@
 import { v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 
-export const get = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query('FarmingSession').collect()
-  },
-})
-
 export const addNewSession = mutation({
   args: {
     userId: v.string(),
@@ -63,13 +56,23 @@ export const addNewSession = mutation({
   },
 })
 
-export const getFarmingSessionById = query({
+export const getFarmingSessionByIdAndUser = query({
   args: {
     farmingSessionId: v.id('FarmingSession'),
+    userId: v.string(),
   },
   handler: async (ctx, args) => {
-    const { farmingSessionId } = args
-    const farmingSession = await ctx.db.get(farmingSessionId)
-    return farmingSession
+    const { farmingSessionId, userId } = args
+    const session = await ctx.db.get(farmingSessionId)
+
+    if (!session) {
+      return null
+    }
+
+    if (session.userId !== userId) {
+      return null
+    }
+
+    return session
   },
 })
