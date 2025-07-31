@@ -1,8 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
+
+interface Scarab {
+  name: string
+  quantity: number
+  price: number
+}
 
 const props = defineProps<{
-  values: any
+  values: {
+    numberOfMaps: number
+    mapCost?: number
+    isUsingChisels: boolean
+    chiselPrice?: number
+    isUsingScarabs: boolean
+    scarabs?: Scarab[]
+    isUsingMapCraft: boolean
+    mapCraftPrice?: number
+  }
+  totalCost?: number
 }>()
 
 // Compute breakdown
@@ -30,7 +46,7 @@ const breakdown = computed(() => {
 
   // Scarabs
   if (v.isUsingScarabs && v.scarabs?.length) {
-    v.scarabs.forEach((s: any) => {
+    v.scarabs.forEach((s: Scarab) => {
       if (s.price && s.quantity) {
         const cost = s.price * s.quantity * numberOfMaps
         items.push({
@@ -53,10 +69,20 @@ const breakdown = computed(() => {
 })
 
 const total = computed(() => breakdown.value.reduce((sum, i) => sum + i.cost, 0))
+
+watchEffect(() => {
+  if (props.totalCost !== undefined && props.totalCost !== total.value) {
+    console.warn(
+      `[CostSummary] Stored total (${props.totalCost}) ` +
+        `does not match computed total (${total.value}).`,
+    )
+    // TODO: later replace with external logger
+  }
+})
 </script>
 
 <template>
-  <div class="rounded-xl border p-4 space-y-3">
+  <div class="rounded-xl border p-4 space-y-3 bg-card text-card-foreground">
     <h3 class="text-lg font-semibold">Cost Summary (in Chaos Orbs)</h3>
 
     <ul class="space-y-1">

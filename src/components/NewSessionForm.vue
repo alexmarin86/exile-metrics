@@ -26,7 +26,7 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { watch, ref, computed, onMounted } from 'vue'
-import { Trash2 } from 'lucide-vue-next'
+import { Trash2, Lightbulb } from 'lucide-vue-next'
 import { useConvexMutation } from '@convex-vue/core'
 import { api } from '../../convex/_generated/api'
 import { useUser } from '@clerk/vue'
@@ -216,11 +216,6 @@ const {
   },
 })
 const onSubmit = form.handleSubmit((values) => {
-  const totalQuantity = values.scarabs.reduce((sum, s) => sum + s.quantity, 0)
-  if (totalQuantity > 5) {
-    alert('Total scarab quantity cannot exceed 5.')
-    return
-  }
   console.log('Form submitted!', values)
   if (!isSignedIn) {
     alert('Please sign in to create a session.')
@@ -238,6 +233,7 @@ const onSubmit = form.handleSubmit((values) => {
     alert('User ID not available.')
     return
   }
+  const scarabArray = values.isUsingScarabs ? values.scarabs : []
   addSession({
     userId: user.value.id,
     createdAt: Date.now(),
@@ -252,7 +248,7 @@ const onSubmit = form.handleSubmit((values) => {
     chiselName: values.chiselName,
     chiselPrice: values.chiselPrice,
     isUsingScarabs: values.isUsingScarabs,
-    scarabs: values.scarabs,
+    scarabs: scarabArray,
     isUsingMapCraft: values.isUsingMapCraft,
     mapCraftName: values.mapCraftName,
     mapCraftPrice: values.mapCraftPrice,
@@ -332,7 +328,9 @@ onMounted(() => {
                 />
               </FormControl>
               <FormDescription>
-                Enter a brief description of the farming strategy you're using.
+                Enter a brief description of the farming strategy you're using. <br />
+                <Lightbulb class="h-4 w-4 inline" /> Hint: you can paste links and they will
+                automatically be clickable in the Session page!
               </FormDescription>
               <FormMessage />
             </FormItem>
