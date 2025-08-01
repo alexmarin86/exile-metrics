@@ -10,9 +10,22 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
-import { Trash2 } from 'lucide-vue-next'
+import {
+  Combobox,
+  ComboboxAnchor,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxItemIndicator,
+  ComboboxList,
+  ComboboxTrigger,
+} from '@/components/ui/combobox'
+import { Trash2, Check, ChevronsUpDown } from 'lucide-vue-next'
 import { computed } from 'vue'
 import type { FarmingSessionForm } from '@/composables/useFarmingSessionForm'
+import { SCARAB_NAMES } from '@/consts/scarabNames'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<{
   form: FarmingSessionForm
@@ -29,6 +42,9 @@ const totalScarabQuantity = computed(() =>
     0,
   ),
 )
+
+// Transform scarab names into the format expected by the combobox
+const scarabOptions = SCARAB_NAMES.map((name) => ({ label: name, value: name }))
 </script>
 
 <template>
@@ -48,16 +64,51 @@ const totalScarabQuantity = computed(() =>
       </FormItem>
     </FormField>
     <div v-for="(scarab, index) in form.values.scarabs" :key="index" class="flex gap-4 items-end">
-      <div class="grid grid-cols-3 gap-4">
+      <div class="grid grid-cols-4 gap-4">
         <FormField :name="`scarabs[${index}].name`" v-slot="{ componentField }">
-          <FormItem>
+          <FormItem class="col-span-2">
             <FormLabel>Name</FormLabel>
             <FormControl>
-              <Input
-                v-bind="componentField"
-                placeholder="Kalguuran Scarab"
+              <Combobox
+                by="value"
                 :disabled="!form.values.isUsingScarabs"
-              />
+                :model-value="scarabOptions.find((opt) => opt.value === componentField.modelValue)"
+                @update:model-value="
+                  (val: any) => componentField['onUpdate:modelValue']?.(val?.value || '')
+                "
+              >
+                <ComboboxAnchor>
+                  <div class="relative w-full items-center">
+                    <ComboboxInput
+                      :display-value="(val) => val?.label ?? componentField.modelValue ?? ''"
+                      placeholder="Select scarab..."
+                    />
+                    <ComboboxTrigger
+                      class="absolute end-0 inset-y-0 flex items-center justify-center px-3"
+                    >
+                      <ChevronsUpDown class="size-4 text-muted-foreground" />
+                    </ComboboxTrigger>
+                  </div>
+                </ComboboxAnchor>
+
+                <ComboboxList>
+                  <ComboboxEmpty> No scarab found. </ComboboxEmpty>
+
+                  <ComboboxGroup>
+                    <ComboboxItem
+                      v-for="option in scarabOptions"
+                      :key="option.value"
+                      :value="option"
+                    >
+                      {{ option.label }}
+
+                      <ComboboxItemIndicator>
+                        <Check :class="cn('ml-auto h-4 w-4')" />
+                      </ComboboxItemIndicator>
+                    </ComboboxItem>
+                  </ComboboxGroup>
+                </ComboboxList>
+              </Combobox>
             </FormControl>
             <FormMessage />
           </FormItem>
