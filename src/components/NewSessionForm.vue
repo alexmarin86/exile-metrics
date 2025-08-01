@@ -95,6 +95,9 @@ const onSubmit = form.handleSubmit((values) => {
         Submitting...
       </Button>
       <Button type="submit" class="ml-auto mr-6 block" v-else> Submit </Button>
+      <small class="text-card-foreground mt-4 ml-auto block w-fit">
+        You will be redirected to the session page after submission.
+      </small>
     </form>
     <CostSummary
       :values="
