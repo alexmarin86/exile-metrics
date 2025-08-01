@@ -76,3 +76,18 @@ export const getFarmingSessionByIdAndUser = query({
     return session
   },
 })
+
+export const getFarmingSessionsByUser = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { userId } = args
+    const sessions = await ctx.db
+      .query('FarmingSession')
+      .withIndex('by_user_id', (q) => q.eq('userId', userId))
+      .collect()
+
+    return sessions
+  },
+})

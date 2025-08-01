@@ -18,6 +18,11 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
+      path: '/sessions',
+      name: 'my-sessions',
+      component: () => import('../views/MyFarmingSessionsView.vue'),
+    },
+    {
       path: '/sessions/new',
       name: 'new-session',
       component: () => import('../views/NewFarmingSessionView.vue'),

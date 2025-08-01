@@ -21,6 +21,13 @@ import { Button } from '@/components/ui/button'
           <li>
             <RouterLink
               class="text-primary text-lg underline inline-block translate-y-0 transition-all duration-300 hover:text-primary/80 hover:text-shadow-2xs hover:text-shadow-primary hover:-translate-y-px"
+              to="/sessions"
+              >My Sessions</RouterLink
+            >
+          </li>
+          <li>
+            <RouterLink
+              class="text-primary text-lg underline inline-block translate-y-0 transition-all duration-300 hover:text-primary/80 hover:text-shadow-2xs hover:text-shadow-primary hover:-translate-y-px"
               to="/sessions/new"
               >New Session</RouterLink
             >
