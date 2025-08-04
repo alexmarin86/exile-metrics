@@ -5,6 +5,7 @@ import { useConvexQuery } from '@convex-vue/core'
 import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
 import SessionInfoSection from '@/components/SessionInfoSection.vue'
+import StintsSection from '@/components/StintsSection.vue'
 import { computed } from 'vue'
 import { LoaderCircle } from 'lucide-vue-next'
 
@@ -50,6 +51,9 @@ const isWorking = computed(() => !isLoaded.value || isLoading.value)
       <p class="font-medium">Session not found.</p>
     </div>
 
-    <SessionInfoSection v-else :session="sessionData" />
+    <div v-else class="space-y-8">
+      <StintsSection :session="sessionData" />
+      <SessionInfoSection :session="sessionData" />
+    </div>
   </main>
 </template>

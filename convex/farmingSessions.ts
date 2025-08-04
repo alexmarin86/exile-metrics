@@ -91,3 +91,31 @@ export const getFarmingSessionsByUser = query({
     return sessions
   },
 })
+
+// Update session notes
+export const updateSessionNotes = mutation({
+  args: {
+    sessionId: v.id('FarmingSession'),
+    userId: v.string(),
+    sessionNotes: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // First, verify the session belongs to the user
+    const session = await ctx.db.get(args.sessionId)
+
+    if (!session) {
+      throw new Error('Session not found')
+    }
+
+    if (session.userId !== args.userId) {
+      throw new Error('Unauthorized: You can only update your own sessions')
+    }
+
+    await ctx.db.patch(args.sessionId, {
+      sessionNotes: args.sessionNotes,
+      updatedAt: Date.now(),
+    })
+
+    return { success: true }
+  },
+})

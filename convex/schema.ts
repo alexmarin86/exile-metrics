@@ -61,4 +61,16 @@ export default defineSchema({
     mapCraftName: v.optional(v.string()),
     mapCraftPrice: v.optional(v.float64()),
   }).index('by_user_id', ['userId']),
+
+  Stint: defineTable({
+    sessionId: v.id('FarmingSession'),
+    userId: v.string(),
+    startTime: v.float64(),
+    endTime: v.optional(v.float64()),
+    duration: v.optional(v.float64()),
+    createdAt: v.float64(),
+    updatedAt: v.float64(),
+  })
+    .index('by_session', ['sessionId'])
+    .index('by_user_session', ['userId', 'sessionId']),
 })
