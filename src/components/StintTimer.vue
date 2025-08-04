@@ -281,9 +281,6 @@ const formatTime = (seconds: number) => {
           </Button>
         </template>
       </div>
-      <div class="text-center text-sm text-muted-foreground">
-        Session: {{ props.session.sessionName }}
-      </div>
     </CardContent>
   </Card>
 </template>

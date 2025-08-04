@@ -37,7 +37,8 @@ const isWorking = computed(() => !isLoaded.value || isLoading.value)
 
 <template>
   <main class="container mx-auto space-y-8">
-    <h1 class="text-2xl font-bold">Current Farming Session</h1>
+    <h1 class="text-2xl font-bold" v-if="sessionData">{{ sessionData.sessionName }}</h1>
+    <h1 class="text-2xl font-bold" v-else>Current Farming Session</h1>
 
     <div v-if="isWorking" class="flex items-center justify-center h-[60vh]">
       <LoaderCircle class="h-10 w-10 animate-spin text-muted-foreground" />
