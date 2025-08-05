@@ -6,6 +6,8 @@ import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
 import SessionInfoSection from '@/components/SessionInfoSection.vue'
 import StintsSection from '@/components/StintsSection.vue'
+import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue'
+import { Button } from '@/components/ui/button'
 import { computed } from 'vue'
 import { LoaderCircle } from 'lucide-vue-next'
 
@@ -37,8 +39,22 @@ const isWorking = computed(() => !isLoaded.value || isLoading.value)
 
 <template>
   <main class="container mx-auto space-y-8">
-    <h1 class="text-2xl font-bold" v-if="sessionData">{{ sessionData.sessionName }}</h1>
-    <h1 class="text-2xl font-bold" v-else>Current Farming Session</h1>
+    <!-- Header Section -->
+    <div
+      v-if="sessionData && userId"
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+    >
+      <h1 class="text-2xl font-bold">{{ sessionData.sessionName }}</h1>
+      <div class="flex gap-3">
+        <DeleteSessionDialog
+          :session-id="sessionData._id"
+          :user-id="userId"
+          :session-name="sessionData.sessionName"
+        />
+        <Button>Complete Session</Button>
+      </div>
+    </div>
+    <h1 v-else class="text-2xl font-bold">Current Farming Session</h1>
 
     <div v-if="isWorking" class="flex items-center justify-center h-[60vh]">
       <LoaderCircle class="h-10 w-10 animate-spin text-muted-foreground" />

@@ -164,7 +164,7 @@ const totalDuration = computed(() => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle class="text-card-foreground">Delete Stint</AlertDialogTitle>
+                      <AlertDialogTitle class="text-foreground">Delete Stint</AlertDialogTitle>
                       <AlertDialogDescription>
                         Are you sure you want to delete this stint? This action cannot be undone.
                         The stint duration was

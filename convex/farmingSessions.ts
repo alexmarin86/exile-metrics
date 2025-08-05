@@ -92,7 +92,6 @@ export const getFarmingSessionsByUser = query({
   },
 })
 
-// Update session notes
 export const updateSessionNotes = mutation({
   args: {
     sessionId: v.id('FarmingSession'),
@@ -115,6 +114,37 @@ export const updateSessionNotes = mutation({
       sessionNotes: args.sessionNotes,
       updatedAt: Date.now(),
     })
+
+    return { success: true }
+  },
+})
+
+export const deleteFarmingSession = mutation({
+  args: {
+    sessionId: v.id('FarmingSession'),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const session = await ctx.db.get(args.sessionId)
+
+    if (!session) {
+      throw new Error('Session not found')
+    }
+
+    if (session.userId !== args.userId) {
+      throw new Error('Unauthorized: You can only delete your own sessions')
+    }
+
+    const stints = await ctx.db
+      .query('Stint')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .collect()
+
+    for (const stint of stints) {
+      await ctx.db.delete(stint._id)
+    }
+
+    await ctx.db.delete(args.sessionId)
 
     return { success: true }
   },
