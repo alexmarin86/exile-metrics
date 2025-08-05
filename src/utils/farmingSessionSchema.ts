@@ -139,3 +139,21 @@ export const initialFormValues = {
 }
 
 export type FarmingSessionFormValues = typeof initialFormValues
+
+export const completeSessionSchema = toTypedSchema(
+  z.object({
+    totalReturns: z
+      .number({ message: 'Please input a valid number' })
+      .min(0, 'Total returns must be a positive number'),
+    divCost: z
+      .number({ message: 'Please input a valid number' })
+      .min(1, 'Divine cost must be greater than 0'),
+  }),
+)
+
+export const initialCompleteSessionValues = {
+  totalReturns: 0,
+  divCost: 200, // Default divine cost in chaos
+}
+
+export type CompleteSessionFormValues = typeof initialCompleteSessionValues

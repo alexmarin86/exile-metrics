@@ -24,6 +24,7 @@ export default defineSchema({
     totalCost: v.optional(v.float64()),
     totalDuration: v.optional(v.float64()),
     totalReturns: v.optional(v.float64()),
+    divCost: v.optional(v.float64()),
     isConcluded: v.boolean(),
     // map info
     mapName: v.optional(v.string()),

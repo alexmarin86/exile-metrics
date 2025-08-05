@@ -149,3 +149,37 @@ export const deleteFarmingSession = mutation({
     return { success: true }
   },
 })
+
+export const completeSession = mutation({
+  args: {
+    sessionId: v.id('FarmingSession'),
+    userId: v.string(),
+    totalReturns: v.float64(),
+    divCost: v.float64(),
+  },
+  handler: async (ctx, args) => {
+    // First, verify the session belongs to the user
+    const session = await ctx.db.get(args.sessionId)
+
+    if (!session) {
+      throw new Error('Session not found')
+    }
+
+    if (session.userId !== args.userId) {
+      throw new Error('Unauthorized: You can only complete your own sessions')
+    }
+
+    if (session.isConcluded) {
+      throw new Error('Session is already completed')
+    }
+
+    await ctx.db.patch(args.sessionId, {
+      totalReturns: args.totalReturns,
+      divCost: args.divCost,
+      isConcluded: true,
+      updatedAt: Date.now(),
+    })
+
+    return { success: true }
+  },
+})
