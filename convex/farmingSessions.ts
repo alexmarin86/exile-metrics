@@ -173,9 +173,19 @@ export const completeSession = mutation({
       throw new Error('Session is already completed')
     }
 
+    const stints = await ctx.db
+      .query('Stint')
+      .withIndex('by_session', (q) => q.eq('sessionId', args.sessionId))
+      .collect()
+
+    const totalDuration = stints.reduce((sum, stint) => {
+      return sum + (stint.duration || 0)
+    }, 0)
+
     await ctx.db.patch(args.sessionId, {
       totalReturns: args.totalReturns,
       divCost: args.divCost,
+      totalDuration: totalDuration,
       isConcluded: true,
       updatedAt: Date.now(),
     })

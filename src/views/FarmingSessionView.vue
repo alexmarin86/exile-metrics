@@ -6,6 +6,7 @@ import { api } from '../../convex/_generated/api'
 import type { Id } from '../../convex/_generated/dataModel'
 import SessionInfoSection from '@/components/SessionInfoSection.vue'
 import StintsSection from '@/components/StintsSection.vue'
+import SessionAnalysis from '@/components/SessionAnalysis.vue'
 import DeleteSessionDialog from '@/components/DeleteSessionDialog.vue'
 import CompleteSessionDialog from '@/components/CompleteSessionDialog.vue'
 import { Badge } from '@/components/ui/badge'
@@ -79,7 +80,9 @@ const isWorking = computed(() => !isLoaded.value || isLoading.value)
     </div>
 
     <div v-else class="space-y-8">
-      <StintsSection :session="sessionData" />
+      <StintsSection v-if="!sessionData.isConcluded" :session="sessionData" />
+      <SessionAnalysis v-else :session="sessionData" />
+
       <SessionInfoSection :session="sessionData" />
     </div>
   </main>
