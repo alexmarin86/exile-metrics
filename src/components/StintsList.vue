@@ -81,6 +81,24 @@ function formatTime(timestamp: number) {
   return new Date(timestamp).toLocaleTimeString()
 }
 
+function formatDate(timestamp: number) {
+  const date = new Date(timestamp)
+  const options: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }
+  const formatted = date.toLocaleDateString('en-US', options)
+
+  const day = date.getDate()
+  let suffix = 'th'
+  if (day % 10 === 1 && day !== 11) suffix = 'st'
+  else if (day % 10 === 2 && day !== 12) suffix = 'nd'
+  else if (day % 10 === 3 && day !== 13) suffix = 'rd'
+
+  return formatted.replace(/(\d+),/, `$1${suffix},`)
+}
+
 const totalDuration = computed(() => {
   if (!stints.value) return 0
   return stints.value.reduce((sum, stint) => sum + (stint.duration || 0), 0)
@@ -112,6 +130,7 @@ const totalDuration = computed(() => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Date</TableHead>
               <TableHead>Start Time</TableHead>
               <TableHead>End Time</TableHead>
               <TableHead class="text-right">Duration</TableHead>
@@ -121,6 +140,9 @@ const totalDuration = computed(() => {
           <TableBody>
             <TableRow v-for="stint in stints" :key="stint._id">
               <TableCell class="font-medium">
+                {{ formatDate(stint.createdAt) }}
+              </TableCell>
+              <TableCell>
                 {{ formatTime(stint.startTime) }}
               </TableCell>
               <TableCell>

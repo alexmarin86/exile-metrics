@@ -53,6 +53,22 @@ const onSubmit = form.handleSubmit(async (values) => {
 })
 
 const isLoading = updateNotes.isLoading
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Tab') {
+    event.preventDefault()
+    const target = event.target as HTMLTextAreaElement
+    const start = target.selectionStart
+    const end = target.selectionEnd
+
+    const value = target.value
+    target.value = value.substring(0, start) + '\t' + value.substring(end)
+
+    target.selectionStart = target.selectionEnd = start + 1
+
+    target.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+}
 </script>
 
 <template>
@@ -61,12 +77,18 @@ const isLoading = updateNotes.isLoading
       <form @submit="onSubmit" class="space-y-4">
         <FormField v-slot="{ componentField }" name="sessionNotes">
           <FormItem>
-            <FormLabel class="text-card-foreground text-base font-bold">Session Notes</FormLabel>
+            <FormLabel class="text-card-foreground text-base font-bold"
+              >Session Notes
+              <small class="text-sm"
+                >Use <kbd class="p-1 bg-black text-white rounded-sm">Tab</kbd> to indent</small
+              ></FormLabel
+            >
             <FormControl>
               <Textarea
                 v-bind="componentField"
+                @keydown="handleKeydown"
                 placeholder="Running this with a support so the proceeds will be split..."
-                class="min-h-[120px] resize-none"
+                class="h-[120px] resize-none overflow-y-auto"
               />
             </FormControl>
             <FormMessage />
