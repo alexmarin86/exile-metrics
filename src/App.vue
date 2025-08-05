@@ -4,6 +4,8 @@ import ThemeSwitcher from './components/ThemeSwitcher.vue'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
 import { UserRound } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
+import { Toaster } from './components/ui/sonner'
+import 'vue-sonner/style.css'
 </script>
 
 <template>
@@ -52,4 +54,5 @@ import { Button } from '@/components/ui/button'
       <RouterView />
     </div>
   </div>
+  <Toaster class="pointer-events-auto" theme="system" />
 </template>

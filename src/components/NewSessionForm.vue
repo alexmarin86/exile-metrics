@@ -11,6 +11,7 @@ import SessionInfoFormSection from '@/components/form-sections/SessionInfoFormSe
 import MapInfoSection from '@/components/form-sections/MapInfoSection.vue'
 import ChiselsCraftSection from '@/components/form-sections/ChiselsCraftSection.vue'
 import ScarabsSection from '@/components/form-sections/ScarabsSection.vue'
+import { toast } from 'vue-sonner'
 
 const router = useRouter()
 const { isSignedIn, user, isLoaded } = useUser()
@@ -18,30 +19,41 @@ const { form, addScarabRow, removeScarabRow } = useFarmingSessionForm()
 
 const { isLoading, mutate: addSession } = useConvexMutation(api['farmingSessions'].addNewSession, {
   onSuccess: (data) => {
-    console.log('Session added successfully!', data)
     router.push(`/sessions/${data}`)
   },
   onError: (error) => {
     console.error('Error adding session:', error)
+    toast('Failed to create session', {
+      description: 'Please try again later.',
+      class: 'bg-red-500 text-white',
+      descriptionClass: 'text-white',
+    })
   },
 })
 
 const onSubmit = form.handleSubmit((values) => {
-  console.log('Form submitted!', values)
   if (!isSignedIn) {
-    alert('Please sign in to create a session.')
+    toast('You must be signed in to create a session.', {
+      description: 'Please log in to continue.',
+    })
     return
   }
   if (!isLoaded) {
-    alert('Please wait for the user data to load.')
+    toast('Please wait for the user data to load.', {
+      description: 'Please try again after a few seconds.',
+    })
     return
   }
   if (!user) {
-    alert('User data not available.')
+    toast('User data not available.', {
+      description: 'Please try again later.',
+    })
     return
   }
   if (!user.value?.id) {
-    alert('User ID not available.')
+    toast('Something went wrong when trying to authenticate you.', {
+      description: 'Please ensure you are logged in.',
+    })
     return
   }
   const scarabArray = values.isUsingScarabs

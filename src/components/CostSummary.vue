@@ -21,13 +21,11 @@ const props = defineProps<{
   totalCost?: number
 }>()
 
-// Compute breakdown
 const breakdown = computed(() => {
   const items: { label: string; cost: number }[] = []
   const v = props.values
   const numberOfMaps = v.numberOfMaps ?? 0
 
-  // Map cost
   if (v.mapCost) {
     items.push({
       label: `Maps (${numberOfMaps} × ${v.mapCost})`,
@@ -35,7 +33,6 @@ const breakdown = computed(() => {
     })
   }
 
-  // Chisels
   if (v.isUsingChisels && v.chiselPrice) {
     const cost = v.chiselPrice * 4 * numberOfMaps
     items.push({
@@ -44,7 +41,6 @@ const breakdown = computed(() => {
     })
   }
 
-  // Scarabs
   if (v.isUsingScarabs && v.scarabs?.length) {
     v.scarabs.forEach((s: Scarab) => {
       if (s.price && s.quantity) {
@@ -57,7 +53,6 @@ const breakdown = computed(() => {
     })
   }
 
-  // Map craft
   if (v.isUsingMapCraft && v.mapCraftPrice) {
     items.push({
       label: `Map craft (${numberOfMaps} × ${v.mapCraftPrice})`,

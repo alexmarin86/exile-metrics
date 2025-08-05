@@ -14,7 +14,6 @@ const props = defineProps<{
 
 <template>
   <div class="grid gap-6 md:grid-cols-2">
-    <!-- Details -->
     <Card class="shadow-sm rounded-2xl">
       <CardHeader>
         <CardTitle class="flex justify-between items-center">
@@ -50,7 +49,6 @@ const props = defineProps<{
       </CardContent>
     </Card>
 
-    <!-- Cost Summary -->
     <CostSummary
       :values="{
         numberOfMaps: props.session.numberOfMaps,

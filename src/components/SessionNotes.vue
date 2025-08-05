@@ -9,6 +9,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { useConvexMutation } from '@convex-vue/core'
 import { api } from '../../convex/_generated/api'
 import type { Doc } from '../../convex/_generated/dataModel'
+import { toast } from 'vue-sonner'
 
 type FarmingSession = Doc<'FarmingSession'>
 
@@ -16,14 +17,12 @@ const props = defineProps<{
   session: FarmingSession
 }>()
 
-// Form schema
 const sessionNotesSchema = toTypedSchema(
   z.object({
     sessionNotes: z.string(),
   }),
 )
 
-// Form setup
 const form = useForm({
   validationSchema: sessionNotesSchema,
   initialValues: {
@@ -31,10 +30,8 @@ const form = useForm({
   },
 })
 
-// Update notes mutation
 const updateNotes = useConvexMutation(api.farmingSessions.updateSessionNotes)
 
-// Form submission
 const onSubmit = form.handleSubmit(async (values) => {
   try {
     await updateNotes.mutate({
@@ -42,10 +39,16 @@ const onSubmit = form.handleSubmit(async (values) => {
       userId: props.session.userId,
       sessionNotes: values.sessionNotes,
     })
-    console.log('Notes saved successfully')
+    toast('Notes saved successfully', {
+      description: 'Your changes have been saved.',
+    })
   } catch (error) {
     console.error('Failed to save notes:', error)
-    // TODO: Could show a toast notification here
+    toast('Failed to save notes', {
+      description: 'Please try again later.',
+      class: 'bg-red-500 text-white',
+      descriptionClass: 'text-white',
+    })
   }
 })
 

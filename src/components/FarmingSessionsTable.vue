@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useConvexQuery } from '@convex-vue/core'
 import { api } from '../../convex/_generated/api'
-import { Loader2, ExternalLink } from 'lucide-vue-next'
+import { ExternalLink } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import {
   Table,
@@ -11,6 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import LoadState from './state-components/LoadState.vue'
+import ErrorState from './state-components/ErrorState.vue'
+import EmptyState from './state-components/EmptyState.vue'
 
 const props = defineProps<{
   userId: string
@@ -26,33 +29,21 @@ const {
 </script>
 
 <template>
-  <!-- Loading state -->
-  <div v-if="isLoading" class="flex items-center justify-center py-12">
-    <div class="flex items-center space-x-2">
-      <Loader2 class="h-6 w-6 animate-spin" />
-      <span class="text-muted-foreground">Loading your farming sessions...</span>
-    </div>
-  </div>
+  <LoadState v-if="isLoading" loading-message="Loading your farming sessions..." />
 
-  <!-- Error state -->
-  <div v-else-if="error" class="text-center py-12">
-    <div class="space-y-2">
-      <h3 class="text-lg font-semibold text-destructive">Error Loading Sessions</h3>
-      <p class="text-muted-foreground">{{ error.message }}</p>
-    </div>
-  </div>
+  <ErrorState
+    v-else-if="error"
+    error-heading="Error Loading Sessions"
+    :error-message="error.message"
+    error-link="/sessions"
+  />
 
-  <!-- Empty state -->
-  <div v-else-if="!sessions || sessions.length === 0" class="text-center py-12">
-    <div class="space-y-4">
-      <h3 class="text-lg font-semibold text-muted-foreground">No Sessions Found</h3>
-      <p class="text-muted-foreground">
-        You haven't created any farming sessions yet. Create your first session to get started!
-      </p>
-    </div>
-  </div>
+  <EmptyState
+    v-else-if="!sessions || sessions.length === 0"
+    empty-heading="No Sessions Found"
+    empty-message="You haven't created any farming sessions yet. Create your first session to get started!"
+  />
 
-  <!-- Data table -->
   <div v-else class="rounded-md border">
     <Table>
       <TableHeader>

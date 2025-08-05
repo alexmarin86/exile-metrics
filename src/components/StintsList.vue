@@ -26,6 +26,7 @@ import { useConvexQuery, useConvexMutation } from '@convex-vue/core'
 import { api } from '../../convex/_generated/api'
 import type { Doc } from '../../convex/_generated/dataModel'
 import { Trash2 } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 
 type FarmingSession = Doc<'FarmingSession'>
 
@@ -33,7 +34,6 @@ const props = defineProps<{
   session: FarmingSession
 }>()
 
-// Query stints for this session
 const queryArgs = computed(() => ({
   sessionId: props.session._id,
   userId: props.session.userId,
@@ -41,25 +41,28 @@ const queryArgs = computed(() => ({
 
 const { data: stints, isLoading } = useConvexQuery(api.stints.getStintsBySession, queryArgs)
 
-// Delete stint mutation
 const deleteStint = useConvexMutation(api.stints.deleteStint)
 
-// Handle stint deletion
 const handleDeleteStint = async (stintId: string) => {
   try {
     await deleteStint.mutate({
       stintId: stintId as Doc<'Stint'>['_id'], // Proper type for Convex ID
       userId: props.session.userId,
     })
-    console.log('Stint deleted successfully')
+    toast('Stint deleted successfully', {
+      description: 'The stint has been removed.',
+    })
   } catch (error) {
     console.error('Failed to delete stint:', error)
-    // TODO: Could show a toast notification here
+    toast('Failed to delete stint', {
+      description: 'Please try again later.',
+      class: 'bg-red-500 text-white',
+      descriptionClass: 'text-white',
+    })
   }
 }
 
-// Format duration helper (convert milliseconds to readable time)
-const formatDuration = (milliseconds: number) => {
+function formatDuration(milliseconds: number) {
   const seconds = Math.floor(milliseconds / 1000)
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
@@ -74,12 +77,10 @@ const formatDuration = (milliseconds: number) => {
   }
 }
 
-// Format time helper (convert timestamp to readable time)
-const formatTime = (timestamp: number) => {
+function formatTime(timestamp: number) {
   return new Date(timestamp).toLocaleTimeString()
 }
 
-// Calculate total duration
 const totalDuration = computed(() => {
   if (!stints.value) return 0
   return stints.value.reduce((sum, stint) => sum + (stint.duration || 0), 0)
@@ -95,12 +96,10 @@ const totalDuration = computed(() => {
       </CardTitle>
     </CardHeader>
     <CardContent>
-      <!-- Loading state -->
       <div v-if="isLoading" class="text-center py-8 text-muted-foreground">
         <p>Loading stints...</p>
       </div>
 
-      <!-- Empty state -->
       <div
         v-else-if="!stints || stints.length === 0"
         class="text-center py-8 text-muted-foreground"
@@ -109,7 +108,6 @@ const totalDuration = computed(() => {
         <p class="text-sm mt-1">Start your first stint using the timer!</p>
       </div>
 
-      <!-- Stints table -->
       <div v-else class="space-y-4">
         <Table>
           <TableHeader>

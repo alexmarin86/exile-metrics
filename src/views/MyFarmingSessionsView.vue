@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useUser } from '@clerk/vue'
-import { Loader2 } from 'lucide-vue-next'
 import FarmingSessionsTable from '@/components/FarmingSessionsTable.vue'
+import LoadState from '@/components/state-components/LoadState.vue'
+import NotAuthedState from '@/components/state-components/NotAuthedState.vue'
 
 const { isSignedIn, user, isLoaded } = useUser()
 </script>
@@ -10,23 +11,14 @@ const { isSignedIn, user, isLoaded } = useUser()
   <main class="container mx-auto space-y-8">
     <h1 class="text-2xl font-bold">My Farming Sessions</h1>
 
-    <!-- Loading state -->
-    <div v-if="!isLoaded" class="flex items-center justify-center py-12">
-      <div class="flex items-center space-x-2">
-        <Loader2 class="h-6 w-6 animate-spin" />
-        <span class="text-muted-foreground">Loading user data...</span>
-      </div>
-    </div>
+    <LoadState loadingMessage="Loading user data..." v-if="!isLoaded" />
 
-    <!-- Not authenticated state -->
-    <div v-else-if="!isSignedIn" class="text-center py-12">
-      <div class="space-y-4">
-        <h2 class="text-xl font-semibold text-muted-foreground">Please Log In</h2>
-        <p class="text-muted-foreground">You need to be logged in to view your farming sessions.</p>
-      </div>
-    </div>
+    <NotAuthedState
+      v-else-if="!isSignedIn"
+      unauthedHeading="Please Log In"
+      unauthedMessage="You need to be logged in to view your farming sessions."
+    />
 
-    <!-- Authenticated state -->
     <div v-else class="space-y-6">
       <div
         class="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4"
@@ -42,7 +34,6 @@ const { isSignedIn, user, isLoaded } = useUser()
         </p>
       </div>
 
-      <!-- Farming Sessions Table -->
       <FarmingSessionsTable v-if="user?.id" :user-id="user.id" />
     </div>
   </main>
