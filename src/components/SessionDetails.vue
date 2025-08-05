@@ -93,6 +93,12 @@ const formatDivines = (value: number) => {
               {{ strategyProfit >= 0 ? '+' : '' }}{{ formatChaos(strategyProfit) }}c
             </p>
           </div>
+          <div>
+            <span class="text-muted-foreground">Number of maps:</span>
+            <p class="font-semibold text-foreground">
+              {{ session.numberOfMaps }}
+            </p>
+          </div>
         </div>
         <div class="space-y-3">
           <div>
