@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import type { Doc } from '../../../convex/_generated/dataModel'
 import { linkifyAndSanitize } from '@/utils/textProcessing'
 import CostSummary from './CostSummary.vue'
@@ -18,9 +17,6 @@ const props = defineProps<{
       <CardHeader>
         <CardTitle class="flex justify-between items-center">
           <span>{{ props.session.sessionName }}</span>
-          <Badge :variant="props.session.isConcluded ? 'secondary' : 'default'">
-            {{ props.session.isConcluded ? 'Concluded' : 'Active' }}
-          </Badge>
         </CardTitle>
         <p
           class="text-sm text-muted-foreground whitespace-pre-line"
