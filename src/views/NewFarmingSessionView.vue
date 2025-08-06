@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NewSessionForm from '@/components/NewSessionForm.vue'
+import NewSessionForm from '@/components/new-farming-session-view/NewSessionForm.vue'
 </script>
 
 <template>

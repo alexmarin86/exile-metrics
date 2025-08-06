@@ -23,8 +23,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { useConvexQuery, useConvexMutation } from '@convex-vue/core'
-import { api } from '../../convex/_generated/api'
-import type { Doc } from '../../convex/_generated/dataModel'
+import { api } from '../../../convex/_generated/api'
+import type { Doc } from '../../../convex/_generated/dataModel'
 import { Trash2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 

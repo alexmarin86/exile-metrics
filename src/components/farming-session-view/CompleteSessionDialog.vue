@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useConvexMutation } from '@convex-vue/core'
-import { api } from '../../convex/_generated/api'
-import type { Id } from '../../convex/_generated/dataModel'
+import { api } from '../../../convex/_generated/api'
+import type { Id } from '../../../convex/_generated/dataModel'
 import { toast } from 'vue-sonner'
 import { useForm } from 'vee-validate'
 import { completeSessionSchema, initialCompleteSessionValues } from '@/utils/farmingSessionSchema'

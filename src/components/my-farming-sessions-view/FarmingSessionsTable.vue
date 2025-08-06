@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useConvexQuery } from '@convex-vue/core'
-import { api } from '../../convex/_generated/api'
+import { api } from '../../../convex/_generated/api'
 import { ExternalLink } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import {
@@ -11,10 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import LoadState from './state-components/LoadState.vue'
-import ErrorState from './state-components/ErrorState.vue'
-import EmptyState from './state-components/EmptyState.vue'
-import Badge from './ui/badge/Badge.vue'
+import LoadState from '@/components/state-components/LoadState.vue'
+import ErrorState from '@/components/state-components/ErrorState.vue'
+import EmptyState from '@/components/state-components/EmptyState.vue'
+import Badge from '@/components/ui/badge/Badge.vue'
 
 const props = defineProps<{
   userId: string

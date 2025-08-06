@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import type { Doc } from '../../convex/_generated/dataModel'
+import type { Doc } from '../../../convex/_generated/dataModel'
 import { computed } from 'vue'
 
 type FarmingSession = Doc<'FarmingSession'>

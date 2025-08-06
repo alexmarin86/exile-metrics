@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SessionDetails from './SessionDetails.vue'
 import StrategyComparisonChart from './StrategyComparisonChart.vue'
-import type { Doc } from '../../convex/_generated/dataModel'
+import type { Doc } from '../../../convex/_generated/dataModel'
 
 type FarmingSession = Doc<'FarmingSession'>
 

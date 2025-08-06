@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, Square } from 'lucide-vue-next'
 import { useConvexMutation } from '@convex-vue/core'
-import { api } from '../../convex/_generated/api'
-import type { Doc } from '../../convex/_generated/dataModel'
+import { api } from '../../../convex/_generated/api'
+import type { Doc } from '../../../convex/_generated/dataModel'
 import { toast } from 'vue-sonner'
 
 type FarmingSession = Doc<'FarmingSession'>

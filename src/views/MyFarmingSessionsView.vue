@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUser } from '@clerk/vue'
-import FarmingSessionsTable from '@/components/FarmingSessionsTable.vue'
+import FarmingSessionsTable from '@/components/my-farming-sessions-view/FarmingSessionsTable.vue'
 import LoadState from '@/components/state-components/LoadState.vue'
 import NotAuthedState from '@/components/state-components/NotAuthedState.vue'
 

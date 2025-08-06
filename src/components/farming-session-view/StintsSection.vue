@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Doc } from '../../convex/_generated/dataModel'
+import type { Doc } from '../../../convex/_generated/dataModel'
 import SessionNotes from './SessionNotes.vue'
 import StintTimer from './StintTimer.vue'
 import StintsList from './StintsList.vue'
