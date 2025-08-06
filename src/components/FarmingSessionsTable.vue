@@ -14,6 +14,7 @@ import {
 import LoadState from './state-components/LoadState.vue'
 import ErrorState from './state-components/ErrorState.vue'
 import EmptyState from './state-components/EmptyState.vue'
+import Badge from './ui/badge/Badge.vue'
 
 const props = defineProps<{
   userId: string
@@ -78,16 +79,9 @@ const {
           </TableCell>
           <TableCell>{{ session.numberOfMaps }}</TableCell>
           <TableCell>
-            <span
-              :class="
-                session.isConcluded
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-              "
-              class="px-2 py-1 rounded-full text-xs font-medium"
-            >
+            <Badge :variant="session.isConcluded ? 'secondary' : 'default'">
               {{ session.isConcluded ? 'Concluded' : 'Active' }}
-            </span>
+            </Badge>
           </TableCell>
           <TableCell class="text-right">
             <span v-if="session.totalCost">{{ session.totalCost.toFixed(2) }} chaos</span>
