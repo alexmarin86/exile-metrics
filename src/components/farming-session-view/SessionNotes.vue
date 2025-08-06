@@ -10,6 +10,7 @@ import { useConvexMutation } from '@convex-vue/core'
 import { api } from '../../../convex/_generated/api'
 import type { Doc } from '../../../convex/_generated/dataModel'
 import { toast } from 'vue-sonner'
+import { Save } from 'lucide-vue-next'
 
 type FarmingSession = Doc<'FarmingSession'>
 
@@ -102,6 +103,7 @@ const handleKeydown = (event: KeyboardEvent) => {
             class="flex items-center gap-2"
             size="sm"
           >
+            <Save class="h-4 w-4 mr-1" />
             {{ isLoading ? 'Saving...' : 'Save Notes' }}
           </Button>
         </div>

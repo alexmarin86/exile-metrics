@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { AlarmClockCheck } from 'lucide-vue-next'
 
 interface Props {
   sessionId: Id<'FarmingSession'>
@@ -53,7 +54,10 @@ const onSubmit = form.handleSubmit(async (values) => {
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Button>Complete Session</Button>
+      <Button>
+        <AlarmClockCheck class="h-4 w-4 mr-1" />
+        Complete Session</Button
+      >
     </DialogTrigger>
     <DialogContent class="sm:max-w-[425px]">
       <DialogHeader>

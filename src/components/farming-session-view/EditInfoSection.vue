@@ -159,7 +159,7 @@ const onSubmit = form.handleSubmit(async (values) => {
 <template>
   <Dialog v-model:open="isDialogOpen">
     <DialogTrigger as-child>
-      <Button variant="ghost" size="sm" class="h-8 px-2">
+      <Button variant="secondary" size="sm" class="h-8 px-2">
         <FilePen class="h-4 w-4 mr-1" />
         Edit
       </Button>

@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-vue-next'
 
 interface Props {
   sessionId: Id<'FarmingSession'>
@@ -56,6 +57,7 @@ const handleDelete = async () => {
         variant="outline"
         class="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground"
       >
+        <Trash2 class="h-4 w-4 mr-1" />
         Delete Session
       </Button>
     </AlertDialogTrigger>
