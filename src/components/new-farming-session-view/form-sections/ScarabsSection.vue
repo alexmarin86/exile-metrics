@@ -23,12 +23,12 @@ import {
 } from '@/components/ui/combobox'
 import { Trash2, Check, ChevronsUpDown } from 'lucide-vue-next'
 import { computed } from 'vue'
-import type { FarmingSessionForm } from '@/composables/useFarmingSessionForm'
+import type { GenericForm, FullFormData } from '@/types/FormTypes'
 import { SCARAB_NAMES } from '@/consts/scarabNames'
 import { cn } from '@/lib/utils'
 
 const props = defineProps<{
-  form: FarmingSessionForm
+  form: GenericForm<FullFormData>
 }>()
 
 defineEmits<{

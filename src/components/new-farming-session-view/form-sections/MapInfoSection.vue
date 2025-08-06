@@ -9,10 +9,10 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import type { FarmingSessionForm } from '@/composables/useFarmingSessionForm'
+import type { GenericForm, BasicMapInfoFormData } from '@/types/FormTypes'
 
 defineProps<{
-  form: FarmingSessionForm
+  form: GenericForm<BasicMapInfoFormData>
 }>()
 </script>
 

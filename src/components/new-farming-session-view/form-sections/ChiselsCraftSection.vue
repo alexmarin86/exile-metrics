@@ -17,10 +17,10 @@ import {
 } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import type { FarmingSessionForm } from '@/composables/useFarmingSessionForm'
+import type { GenericForm, FullFormData } from '@/types/FormTypes'
 
 defineProps<{
-  form: FarmingSessionForm
+  form: GenericForm<FullFormData>
 }>()
 </script>
 

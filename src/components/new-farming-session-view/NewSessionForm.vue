@@ -15,7 +15,8 @@ import { toast } from 'vue-sonner'
 
 const router = useRouter()
 const { isSignedIn, user, isLoaded } = useUser()
-const { form, addScarabRow, removeScarabRow } = useFarmingSessionForm()
+const { form, addScarabRow, removeScarabRow, sessionFormAdapter, mapFormAdapter, fullFormAdapter } =
+  useFarmingSessionForm()
 
 const { isLoading, mutate: addSession } = useConvexMutation(api['farmingSessions'].addNewSession, {
   onSuccess: (data) => {
@@ -94,11 +95,11 @@ const onSubmit = form.handleSubmit((values) => {
   <div class="grid gap-6 grid-cols-1 lg:grid-cols-3">
     <form @submit="onSubmit" class="lg:col-span-2">
       <div class="grid gap-6 grid-cols-1 lg:grid-cols-2 xl:gap-12 mb-12">
-        <SessionInfoFormSection :form="form" />
-        <MapInfoSection :form="form" />
-        <ChiselsCraftSection :form="form" />
+        <SessionInfoFormSection :form="sessionFormAdapter" />
+        <MapInfoSection :form="mapFormAdapter" />
+        <ChiselsCraftSection :form="fullFormAdapter" />
         <ScarabsSection
-          :form="form"
+          :form="fullFormAdapter"
           @add-scarab-row="addScarabRow"
           @remove-scarab-row="removeScarabRow"
         />

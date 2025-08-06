@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import type { Doc } from '../../../convex/_generated/dataModel'
 import { linkifyAndSanitize } from '@/utils/textProcessing'
 import CostSummary from './CostSummary.vue'
+import EditInfoSection from './EditInfoSection.vue'
 
 type FarmingSession = Doc<'FarmingSession'>
 
@@ -17,6 +18,7 @@ const props = defineProps<{
       <CardHeader>
         <CardTitle class="flex justify-between items-center">
           <span>{{ props.session.sessionName }}</span>
+          <EditInfoSection v-if="!props.session.isConcluded" :session="props.session" />
         </CardTitle>
         <p
           class="text-sm text-muted-foreground whitespace-pre-line"

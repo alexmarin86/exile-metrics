@@ -10,10 +10,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Lightbulb } from 'lucide-vue-next'
-import type { FarmingSessionForm } from '@/composables/useFarmingSessionForm'
+import type { GenericForm, SessionInfoFormData } from '@/types/FormTypes'
 
-defineProps<{
-  form: FarmingSessionForm
+const props = defineProps<{
+  form: GenericForm<SessionInfoFormData>
+  isEditing?: boolean
 }>()
 </script>
 
@@ -47,7 +48,7 @@ defineProps<{
         <FormMessage />
       </FormItem>
     </FormField>
-    <FormField v-slot="{ componentField }" name="sessionNotes">
+    <FormField v-if="!props.isEditing" v-slot="{ componentField }" name="sessionNotes">
       <FormItem>
         <FormLabel>Session Notes</FormLabel>
         <FormControl>
