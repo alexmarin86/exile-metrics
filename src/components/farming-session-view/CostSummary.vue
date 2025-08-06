@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { computed, watchEffect } from 'vue'
+import EditCostDialog from './EditCostDialog.vue'
+import type { Doc } from '../../../convex/_generated/dataModel'
+
+type FarmingSession = Doc<'FarmingSession'>
 
 interface Scarab {
   name: string
@@ -19,6 +23,7 @@ const props = defineProps<{
     mapCraftPrice?: number
   }
   totalCost?: number
+  session?: FarmingSession
 }>()
 
 const breakdown = computed(() => {
@@ -77,8 +82,11 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="rounded-xl border p-4 space-y-3 bg-card text-card-foreground">
-    <h3 class="text-lg font-semibold">Cost Summary (in Chaos Orbs)</h3>
+  <div class="rounded-xl border p-6 space-y-3 bg-card text-card-foreground">
+    <h3 class="text-lg font-semibold flex justify-between leading-none">
+      <span>Cost Summary (in Chaos Orbs)</span>
+      <EditCostDialog v-if="props.session && !props.session.isConcluded" :session="props.session" />
+    </h3>
 
     <ul class="space-y-1">
       <li v-for="(item, idx) in breakdown" :key="idx" class="flex justify-between">

@@ -16,7 +16,7 @@ const props = defineProps<{
   <div class="grid gap-6 md:grid-cols-2">
     <Card class="shadow-sm rounded-2xl">
       <CardHeader>
-        <CardTitle class="flex justify-between items-center">
+        <CardTitle class="flex justify-between items-center text-lg font-semibold">
           <span>{{ props.session.sessionName }}</span>
           <EditInfoSection v-if="!props.session.isConcluded" :session="props.session" />
         </CardTitle>
@@ -59,6 +59,7 @@ const props = defineProps<{
         mapCraftPrice: props.session.mapCraftPrice,
       }"
       :totalCost="props.session.totalCost"
+      :session="props.session"
     />
   </div>
 </template>

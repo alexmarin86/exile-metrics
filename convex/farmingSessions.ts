@@ -220,6 +220,10 @@ export const updateSessionInfo = mutation({
       throw new Error('Unauthorized: You can only update your own sessions')
     }
 
+    if (session.isConcluded) {
+      throw new Error('Cannot update info for a concluded session')
+    }
+
     await ctx.db.patch(args.sessionId, {
       sessionName: args.sessionName,
       sessionDescription: args.sessionDescription,
@@ -229,6 +233,70 @@ export const updateSessionInfo = mutation({
       isSelfFarmed: args.isSelfFarmed,
       mapCost: args.mapCost,
       numberOfMaps: args.numberOfMaps,
+      updatedAt: Date.now(),
+    })
+
+    return { success: true }
+  },
+})
+
+export const updateSessionCost = mutation({
+  args: {
+    sessionId: v.id('FarmingSession'),
+    userId: v.string(),
+    // chisel info
+    isUsingChisels: v.boolean(),
+    chiselName: v.optional(
+      v.union(
+        v.literal("Cartographer's Chisel"),
+        v.literal("Maven's Chisel of Avarice"),
+        v.literal("Maven's Chisel of Divination"),
+        v.literal("Maven's Chisel of Procurement"),
+        v.literal("Maven's Chisel of Proliferation"),
+        v.literal("Maven's Chisel of Scarabs"),
+      ),
+    ),
+    chiselPrice: v.optional(v.float64()),
+    // scarab info
+    isUsingScarabs: v.boolean(),
+    scarabs: v.optional(
+      v.array(
+        v.object({
+          name: v.string(),
+          price: v.float64(),
+          quantity: v.float64(),
+        }),
+      ),
+    ),
+    // map craft info
+    isUsingMapCraft: v.boolean(),
+    mapCraftName: v.optional(v.string()),
+    mapCraftPrice: v.optional(v.float64()),
+  },
+  handler: async (ctx, args) => {
+    const session = await ctx.db.get(args.sessionId)
+
+    if (!session) {
+      throw new Error('Session not found')
+    }
+
+    if (session.userId !== args.userId) {
+      throw new Error('Unauthorized: You can only update your own sessions')
+    }
+
+    if (session.isConcluded) {
+      throw new Error('Cannot update cost for a concluded session')
+    }
+
+    await ctx.db.patch(args.sessionId, {
+      isUsingChisels: args.isUsingChisels,
+      chiselName: args.chiselName,
+      chiselPrice: args.chiselPrice,
+      isUsingScarabs: args.isUsingScarabs,
+      scarabs: args.scarabs,
+      isUsingMapCraft: args.isUsingMapCraft,
+      mapCraftName: args.mapCraftName,
+      mapCraftPrice: args.mapCraftPrice,
       updatedAt: Date.now(),
     })
 
