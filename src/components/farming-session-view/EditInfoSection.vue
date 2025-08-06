@@ -2,6 +2,9 @@
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
+import { useConvexMutation } from '@convex-vue/core'
+import { api } from '../../../convex/_generated/api'
+import { toast } from 'vue-sonner'
 import {
   Dialog,
   DialogContent,
@@ -17,7 +20,7 @@ import SessionInfoFormSection from '@/components/new-farming-session-view/form-s
 import MapInfoSection from '@/components/new-farming-session-view/form-sections/MapInfoSection.vue'
 import type { Doc } from '../../../convex/_generated/dataModel'
 import type { GenericForm, SessionInfoFormData, BasicMapInfoFormData } from '@/types/FormTypes'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 type FarmingSession = Doc<'FarmingSession'>
 
@@ -27,7 +30,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// Create the schema for editing session info and map info (excluding sessionNotes)
+const isDialogOpen = ref(false)
+
+const updateSessionInfoMutation = useConvexMutation(api.farmingSessions.updateSessionInfo)
+
 const editSessionSchema = toTypedSchema(
   z
     .object({
@@ -72,6 +78,27 @@ const form = useForm({
   initialValues,
 })
 
+// Function to reset form values to current session data
+const resetFormValues = () => {
+  form.setValues({
+    sessionName: props.session.sessionName,
+    sessionDescription: props.session.sessionDescription,
+    isRandomMap: props.session.isRandomMap,
+    mapName: props.session.mapName,
+    isOriginator: props.session.isOriginator,
+    isSelfFarmed: props.session.isSelfFarmed,
+    mapCost: props.session.mapCost,
+    numberOfMaps: props.session.numberOfMaps,
+  })
+}
+
+// Reset form when dialog opens
+watch(isDialogOpen, (newValue) => {
+  if (newValue) {
+    resetFormValues()
+  }
+})
+
 // Create wrapper objects that match the expected interfaces
 const sessionFormWrapper = computed(
   (): GenericForm<SessionInfoFormData> => ({
@@ -107,16 +134,30 @@ const mapFormWrapper = computed(
 
 const onSubmit = form.handleSubmit(async (values) => {
   try {
-    // TODO: Implement DB persistence later
-    console.log('Form values:', values)
+    await updateSessionInfoMutation.mutate({
+      sessionId: props.session._id,
+      userId: props.session.userId,
+      sessionName: values.sessionName,
+      sessionDescription: values.sessionDescription,
+      isRandomMap: values.isRandomMap,
+      mapName: values.mapName,
+      isOriginator: values.isOriginator,
+      isSelfFarmed: values.isSelfFarmed,
+      mapCost: values.mapCost,
+      numberOfMaps: values.numberOfMaps,
+    })
+
+    toast.success('Session info updated successfully!')
+    isDialogOpen.value = false // Close the dialog
   } catch (error) {
     console.error('Error updating session:', error)
+    toast.error('Failed to update session info. Please try again.')
   }
 })
 </script>
 
 <template>
-  <Dialog>
+  <Dialog v-model:open="isDialogOpen">
     <DialogTrigger as-child>
       <Button variant="ghost" size="sm" class="h-8 px-2">
         <FilePen class="h-4 w-4 mr-1" />

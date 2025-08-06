@@ -193,3 +193,45 @@ export const completeSession = mutation({
     return { success: true }
   },
 })
+
+export const updateSessionInfo = mutation({
+  args: {
+    sessionId: v.id('FarmingSession'),
+    userId: v.string(),
+    // session info
+    sessionName: v.string(),
+    sessionDescription: v.string(),
+    // map info
+    isRandomMap: v.boolean(),
+    mapName: v.optional(v.string()),
+    isOriginator: v.boolean(),
+    isSelfFarmed: v.boolean(),
+    mapCost: v.optional(v.float64()),
+    numberOfMaps: v.float64(),
+  },
+  handler: async (ctx, args) => {
+    const session = await ctx.db.get(args.sessionId)
+
+    if (!session) {
+      throw new Error('Session not found')
+    }
+
+    if (session.userId !== args.userId) {
+      throw new Error('Unauthorized: You can only update your own sessions')
+    }
+
+    await ctx.db.patch(args.sessionId, {
+      sessionName: args.sessionName,
+      sessionDescription: args.sessionDescription,
+      isRandomMap: args.isRandomMap,
+      mapName: args.mapName,
+      isOriginator: args.isOriginator,
+      isSelfFarmed: args.isSelfFarmed,
+      mapCost: args.mapCost,
+      numberOfMaps: args.numberOfMaps,
+      updatedAt: Date.now(),
+    })
+
+    return { success: true }
+  },
+})
