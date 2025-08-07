@@ -4,7 +4,7 @@ import type { Component } from 'vue'
 import { omit } from '@unovis/ts'
 import { VisTooltip } from '@unovis/vue'
 import { createApp } from 'vue'
-import { ChartTooltip } from '.'
+import { ChartTooltip } from '@/components/ui/chart/'
 
 const props = defineProps<{
   selector: string
