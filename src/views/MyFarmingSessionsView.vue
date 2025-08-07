@@ -3,6 +3,7 @@ import { useUser } from '@clerk/vue'
 import FarmingSessionsTable from '@/components/my-farming-sessions-view/FarmingSessionsTable.vue'
 import LoadState from '@/components/state-components/LoadState.vue'
 import NotAuthedState from '@/components/state-components/NotAuthedState.vue'
+import { Eye } from 'lucide-vue-next'
 
 const { isSignedIn, user, isLoaded } = useUser()
 </script>
@@ -21,17 +22,15 @@ const { isSignedIn, user, isLoaded } = useUser()
 
     <div v-else class="space-y-6">
       <div
-        class="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4"
+        class="bg-primary-50 dark:bg-primary-950 border border-primary-200 dark:border-primary-800 rounded-lg p-4"
       >
         <div class="flex items-center space-x-2">
-          <div class="h-2 w-2 bg-green-500 rounded-full"></div>
-          <span class="text-green-700 dark:text-green-300 font-medium">
-            Welcome back, {{ user?.firstName || user?.emailAddresses?.[0]?.emailAddress }}!
+          <Eye class="h-5 w-5 text-primary-500" />
+          <span class="text-primary-700 dark:text-primary-300 font-medium">
+            Browse your sessions in the table below by clicking the link in the name column.
           </span>
         </div>
-        <p class="text-green-600 dark:text-green-400 text-sm mt-1">
-          Successfully authenticated. Your farming sessions will appear here.
-        </p>
+        <p>Filters coming soon!</p>
       </div>
 
       <FarmingSessionsTable v-if="user?.id" :user-id="user.id" />
