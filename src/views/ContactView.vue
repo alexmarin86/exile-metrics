@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import ContactForm from '@/components/contact/ContactForm.vue'
-
-// TODO: Replace with actual user ID from your auth system
-const userId = 'user-123' // This should come from your authentication context
+import { useUser } from '@clerk/vue'
+import LoadState from '@/components/state-components/LoadState.vue'
+import NotAuthedState from '@/components/state-components/NotAuthedState.vue'
+const { isSignedIn, user, isLoaded } = useUser()
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
+    <LoadState loadingMessage="Loading user data..." v-if="!isLoaded" />
+
+    <NotAuthedState
+      v-else-if="!isSignedIn || !user"
+      unauthedHeading="Please Log In"
+      unauthedMessage="You need to be logged in to send a message."
+    />
+    <div class="max-w-4xl mx-auto" v-else>
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-primary mb-4">Get in Touch</h1>
         <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -16,7 +24,7 @@ const userId = 'user-123' // This should come from your authentication context
         </p>
       </div>
 
-      <ContactForm :userId="userId" />
+      <ContactForm :userId="user.id" />
 
       <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
         <div class="text-center p-6 bg-card rounded-lg border">

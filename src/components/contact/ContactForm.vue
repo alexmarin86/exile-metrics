@@ -47,40 +47,29 @@ const onSubmit = form.handleSubmit(async (values) => {
       message: values.message,
     })
 
-    toast(result?.message || 'Message sent successfully!', {
-      description: "We'll get back to you as soon as possible.",
-    })
-
-    form.resetForm()
+    if (result && result.success) {
+      toast(result.message || 'Message sent successfully!', {
+        description: "We'll get back to you as soon as possible.",
+      })
+      form.resetForm()
+    } else {
+      throw new Error('Unexpected response from server')
+    }
   } catch (error) {
     console.error('Failed to submit contact message:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Failed to send message'
 
-    toast('Failed to send message', {
-      description: errorMessage,
-      class: 'bg-red-500 text-white',
-      descriptionClass: 'text-white',
+    let errorMessage = 'Failed to send message. Try again later.'
+    if (error instanceof Error) {
+      errorMessage = error.message
+    }
+
+    toast.error(errorMessage, {
+      description: 'Please check your input and try again.',
     })
   }
 })
 
 const isLoading = submitMessage.isLoading
-
-const handleKeydown = (event: KeyboardEvent) => {
-  if (event.key === 'Tab') {
-    event.preventDefault()
-    const target = event.target as HTMLTextAreaElement
-    const start = target.selectionStart
-    const end = target.selectionEnd
-
-    const value = target.value
-    target.value = value.substring(0, start) + '\t' + value.substring(end)
-
-    target.selectionStart = target.selectionEnd = start + 1
-
-    target.dispatchEvent(new Event('input', { bubbles: true }))
-  }
-}
 </script>
 
 <template>
@@ -110,16 +99,10 @@ const handleKeydown = (event: KeyboardEvent) => {
 
         <FormField v-slot="{ componentField }" name="message">
           <FormItem>
-            <FormLabel class="text-card-foreground text-base font-bold"
-              >Message
-              <small class="text-sm"
-                >Use <kbd class="p-1 bg-black text-white rounded-sm">Tab</kbd> to indent</small
-              ></FormLabel
-            >
+            <FormLabel class="text-card-foreground text-base font-bold">Message</FormLabel>
             <FormControl>
               <Textarea
                 v-bind="componentField"
-                @keydown="handleKeydown"
                 placeholder="Please describe your question or feedback in detail..."
                 class="h-[200px] resize-none overflow-y-auto"
                 maxlength="1000"
