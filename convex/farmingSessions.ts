@@ -303,3 +303,19 @@ export const updateSessionCost = mutation({
     return { success: true }
   },
 })
+
+export const getUsersCompletedSessions = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { userId } = args
+    const sessions = await ctx.db
+      .query('FarmingSession')
+      .withIndex('by_user_id', (q) => q.eq('userId', userId))
+      .filter((q) => q.eq(q.field('isConcluded'), true))
+      .collect()
+
+    return sessions
+  },
+})

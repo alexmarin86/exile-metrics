@@ -11,8 +11,8 @@ defineProps<{
 </script>
 
 <template>
-  <div class="grid gap-6 md:grid-cols-2">
+  <div class="grid gap-6 md:grid-cols-3">
     <SessionDetails :session="session" />
-    <StrategyComparisonChart :session="session" />
+    <StrategyComparisonChart class="col-span-2" :session="session" />
   </div>
 </template>

@@ -65,7 +65,7 @@ const formatDivines = (value: number) => {
 <template>
   <Card class="shadow-sm rounded-2xl">
     <CardHeader>
-      <CardTitle class="text-foreground">Session Analysis</CardTitle>
+      <CardTitle class="text-foreground text-lg font-semibold">Session Analysis</CardTitle>
     </CardHeader>
     <CardContent class="space-y-4">
       <div class="grid grid-cols-2 gap-4 text-sm">
