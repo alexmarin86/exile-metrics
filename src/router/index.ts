@@ -32,6 +32,16 @@ const router = createRouter({
       name: 'session',
       component: () => import('../views/FarmingSessionView.vue'),
     },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('../views/ContactView.vue'),
+    },
+    {
+      path: '/license',
+      name: 'license',
+      component: () => import('../views/LicenseStatementView.vue'),
+    },
   ],
 })
 

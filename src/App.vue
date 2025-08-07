@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
+import AppFooter from './components/AppFooter.vue'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
 import { UserRound } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
@@ -53,6 +54,7 @@ import 'vue-sonner/style.css'
     <div class="grow py-8 text-foreground">
       <RouterView />
     </div>
+    <AppFooter />
   </div>
   <Toaster class="pointer-events-auto" theme="system" />
 </template>

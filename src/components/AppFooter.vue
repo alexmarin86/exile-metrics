@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+import { Mail, FileText } from 'lucide-vue-next'
+</script>
+
+<template>
+  <footer class="bg-primary-foreground border-t border-primary/20 mt-auto">
+    <div class="container mx-auto px-4 py-6">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <RouterLink
+          to="/license"
+          class="flex items-center gap-2 text-primary/70 hover:text-primary transition-colors duration-200 text-sm mb-4 md:mb-0"
+        >
+          <FileText class="h-4 w-4" />
+          © {{ new Date().getFullYear() }} Exile Metrics - GPL v3.0 Licensed
+        </RouterLink>
+
+        <nav class="flex gap-6">
+          <RouterLink
+            to="/contact"
+            class="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-200"
+          >
+            <Mail class="h-4 w-4" />
+            Contact Us
+          </RouterLink>
+        </nav>
+      </div>
+    </div>
+  </footer>
+</template>

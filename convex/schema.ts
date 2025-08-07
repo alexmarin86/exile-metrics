@@ -74,4 +74,10 @@ export default defineSchema({
   })
     .index('by_session', ['sessionId'])
     .index('by_user_session', ['userId', 'sessionId']),
+
+  ContactMessage: defineTable({
+    userId: v.string(),
+    subject: v.string(),
+    message: v.string(),
+  }).index('by_user_id', ['userId']),
 })
