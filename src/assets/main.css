@@ -82,7 +82,7 @@
     --vis-tooltip-backdrop-filter: none !important;
     --vis-tooltip-padding: none !important;
 
-    --vis-primary-color: var(--primary);
+    --vis-primary-color: 40 35% 40%;
     /* change to any hsl value you want */
     --vis-secondary-color: 160 81% 40%;
     --vis-text-color: var(--muted-foreground);
@@ -124,7 +124,7 @@
     --vis-tooltip-backdrop-filter: none !important;
     --vis-tooltip-padding: none !important;
 
-    --vis-primary-color: var(--primary);
+    --vis-primary-color: 38 35% 45%;
     /* change to any hsl value you want */
     --vis-secondary-color: 160 81% 40%;
     --vis-text-color: var(--muted-foreground);
