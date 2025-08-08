@@ -9,18 +9,18 @@ const props = defineProps<{
 }>()
 </script>
 <template>
-  <div class="text-center py-12">
+  <div class="text-center py-12 space-y-6">
     <div class="space-y-2">
       <h3 class="text-lg font-semibold text-destructive">{{ props.errorHeading }}</h3>
       <p class="text-muted-foreground">{{ props.errorMessage }}</p>
     </div>
-    <div>
-      <RouterLink :to="props.errorLink" class="btn btn-primary">
+    <div class="flex items-center gap-2">
+      <RouterLink :to="props.errorLink" class="btn btn-primary flex gap-1 items-center">
         <RotateCw class="h-4 w-4 mr-2" />
         Retry
       </RouterLink>
       or
-      <RouterLink to="/" class="btn btn-secondary">
+      <RouterLink to="/" class="btn btn-secondary flex gap-1 items-center">
         <House class="h-4 w-4 mr-2" />
         Go Home
       </RouterLink>
