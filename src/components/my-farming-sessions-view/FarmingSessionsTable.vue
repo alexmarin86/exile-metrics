@@ -35,7 +35,7 @@ const {
   <ErrorState
     v-else-if="error"
     error-heading="Error Loading Sessions"
-    error-message="Something went wrong. Please try again later."
+    error-message="Something went wrong. Please try again later, or create a new session if you haven't yet"
     error-link="/sessions"
   />
 

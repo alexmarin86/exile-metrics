@@ -14,13 +14,13 @@ const props = defineProps<{
       <h3 class="text-lg font-semibold text-destructive">{{ props.errorHeading }}</h3>
       <p class="text-muted-foreground">{{ props.errorMessage }}</p>
     </div>
-    <div class="flex items-center gap-2">
-      <RouterLink :to="props.errorLink" class="btn btn-primary flex gap-1 items-center">
+    <div class="flex items-center justify-center gap-2">
+      <RouterLink :to="props.errorLink" class="text-primary flex gap-1 items-center">
         <RotateCw class="h-4 w-4 mr-2" />
         Retry
       </RouterLink>
       or
-      <RouterLink to="/" class="btn btn-secondary flex gap-1 items-center">
+      <RouterLink to="/" class="text-secondary-foreground flex gap-1 items-center">
         <House class="h-4 w-4 mr-2" />
         Go Home
       </RouterLink>
