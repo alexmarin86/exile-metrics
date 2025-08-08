@@ -224,6 +224,22 @@ export const updateSessionInfo = mutation({
       throw new Error('Cannot update info for a concluded session')
     }
 
+    // Recalculate total cost when number of maps changes
+    let newTotalCost = session.totalCost
+    if (args.numberOfMaps !== session.numberOfMaps) {
+      // Calculate costs that scale with number of maps
+      const mapCost = args.isSelfFarmed ? 0 : (args.mapCost ?? 0)
+      const chiselCost = session.isUsingChisels ? (session.chiselPrice ?? 0) * 4 : 0
+      const mapCraftCost = session.isUsingMapCraft ? (session.mapCraftPrice ?? 0) : 0
+
+      const scarabCost =
+        session.isUsingScarabs && session.scarabs
+          ? session.scarabs.reduce((sum, s) => sum + s.quantity * s.price, 0)
+          : 0
+
+      newTotalCost = (mapCost + chiselCost + scarabCost + mapCraftCost) * args.numberOfMaps
+    }
+
     await ctx.db.patch(args.sessionId, {
       sessionName: args.sessionName,
       sessionDescription: args.sessionDescription,
@@ -233,6 +249,7 @@ export const updateSessionInfo = mutation({
       isSelfFarmed: args.isSelfFarmed,
       mapCost: args.mapCost,
       numberOfMaps: args.numberOfMaps,
+      totalCost: newTotalCost,
       updatedAt: Date.now(),
     })
 
@@ -288,6 +305,18 @@ export const updateSessionCost = mutation({
       throw new Error('Cannot update cost for a concluded session')
     }
 
+    // Calculate total cost
+    const mapCost = session.isSelfFarmed ? 0 : (session.mapCost ?? 0)
+    const chiselCost = args.isUsingChisels ? (args.chiselPrice ?? 0) * 4 : 0
+    const mapCraftCost = args.isUsingMapCraft ? (args.mapCraftPrice ?? 0) : 0
+
+    const scarabCost =
+      args.isUsingScarabs && args.scarabs
+        ? args.scarabs.reduce((sum, s) => sum + s.quantity * s.price, 0)
+        : 0
+
+    const totalCost = (mapCost + chiselCost + scarabCost + mapCraftCost) * session.numberOfMaps
+
     await ctx.db.patch(args.sessionId, {
       isUsingChisels: args.isUsingChisels,
       chiselName: args.chiselName,
@@ -297,6 +326,7 @@ export const updateSessionCost = mutation({
       isUsingMapCraft: args.isUsingMapCraft,
       mapCraftName: args.mapCraftName,
       mapCraftPrice: args.mapCraftPrice,
+      totalCost: totalCost,
       updatedAt: Date.now(),
     })
 

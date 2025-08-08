@@ -78,7 +78,6 @@ const chartData = computed(() => {
 
   return data
 })
-console.log('Chart Data:', chartData.value)
 </script>
 
 <template>
