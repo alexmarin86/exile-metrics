@@ -111,7 +111,7 @@ import {
           Ready to dive in? Start tracking your next mapping session now.
         </p>
         <Button variant="secondary" size="lg">
-          New session
+          <RouterLink to="/sessions/new">New session</RouterLink>
           <ArrowRight class="ml-2 w-4 h-4" />
         </Button>
       </li>
