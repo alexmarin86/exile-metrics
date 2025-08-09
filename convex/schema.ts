@@ -79,5 +79,23 @@ export default defineSchema({
     userId: v.string(),
     subject: v.string(),
     message: v.string(),
+    status: v.optional(
+      v.union(
+        v.literal('pending'),
+        v.literal('inDevelopmentQueue'),
+        v.literal('starred'),
+        v.literal('highPriority'),
+        v.literal('lowPriority'),
+        v.literal('addressed'),
+      ),
+    ),
+    updatedAt: v.optional(v.float64()),
+  })
+    .index('by_user_id', ['userId'])
+    .index('by_status', ['status']),
+
+  UserSettings: defineTable({
+    userId: v.string(),
+    lastAdminLoginTime: v.optional(v.float64()),
   }).index('by_user_id', ['userId']),
 })

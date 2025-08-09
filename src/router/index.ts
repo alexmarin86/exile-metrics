@@ -38,6 +38,11 @@ const router = createRouter({
       component: () => import('../views/ContactView.vue'),
     },
     {
+      path: '/admin/contact-messages',
+      name: 'contact-messages',
+      component: () => import('../views/ContactMessagesView.vue'),
+    },
+    {
       path: '/license',
       name: 'license',
       component: () => import('../views/LicenseStatementView.vue'),
