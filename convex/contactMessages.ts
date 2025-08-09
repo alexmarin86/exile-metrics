@@ -126,7 +126,10 @@ export const getNewContactMessagesCount = query({
     const newMessages = allMessages.filter(
       (message) => message._creationTime > args.lastAdminLoginTime!,
     )
-
+    const newMessages = await ctx.db
+      .query('ContactMessage')
+      .withIndex('by_creation_time', (q) => q.gt('_creationTime', args.lastAdminLoginTime!))
+      .collect()
     return newMessages.length
   },
 })
