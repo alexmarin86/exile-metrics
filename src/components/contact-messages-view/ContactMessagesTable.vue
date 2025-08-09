@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Star, AlertTriangle, ArrowDown, Code, Check, Copy } from 'lucide-vue-next'
 import {
   Table,
@@ -40,15 +41,23 @@ const emit = defineEmits<{
   updateStatus: [messageId: Id<'ContactMessage'>, status: MessageStatus]
 }>()
 
+// Reactive state for copy feedback
+const copiedStates = ref<Record<string, boolean>>({})
+
 // Methods
 const toggleStatus = (messageId: Id<'ContactMessage'>, newStatus: MessageStatus) => {
   emit('updateStatus', messageId, newStatus)
 }
 
-const copyToClipboard = async (text: string) => {
+const copyToClipboard = async (text: string, messageId: string) => {
   try {
     await navigator.clipboard.writeText(text)
-    // You could add a toast notification here
+    // Show visual feedback using message ID as key
+    copiedStates.value[messageId] = true
+    // Hide feedback after 2 seconds
+    setTimeout(() => {
+      copiedStates.value[messageId] = false
+    }, 2000)
     console.log('Copied to clipboard:', text)
   } catch (err) {
     console.error('Failed to copy to clipboard:', err)
@@ -106,9 +115,14 @@ const formatDate = (timestamp: number): string => {
                 {{ message.userId }}
               </div>
               <button
-                @click="copyToClipboard(message.userId)"
-                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded z-10 transition-colors"
-                :title="`Copy user ID: ${message.userId}`"
+                @click="copyToClipboard(message.userId, message._id)"
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded z-10 transition-all duration-200"
+                :class="
+                  copiedStates[message._id]
+                    ? 'bg-green-100 dark:bg-green-900/30'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                "
+                :title="copiedStates[message._id] ? 'Copied!' : `Copy user ID: ${message.userId}`"
               >
                 <Copy :size="14" />
               </button>
