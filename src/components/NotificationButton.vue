@@ -15,12 +15,7 @@ const hasPermission = computed(() => {
   if (!isLoaded.value || !user.value) return false
   const orgMembership = user.value.organizationMemberships[0]
   const hasAdminRole = orgMembership?.role === 'org:admin'
-  const permissions = orgMembership?.permissions as string[] | undefined
-  const hasContactPermission = permissions?.includes(
-    'org:contact_message_access:hascontactmessagepermission',
-  )
-
-  return hasAdminRole && hasContactPermission
+  return hasAdminRole
 })
 
 const userIdArgs = computed(() => ({
