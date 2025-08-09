@@ -68,7 +68,7 @@ const copyToClipboard = async (text: string, messageId: string) => {
     setTimeout(() => {
       copiedStates.value[messageId] = false
     }, 2000)
-    console.log('Copied to clipboard:', text)
+    // Removed console.log for production
   } catch (err) {
     console.error('Failed to copy to clipboard:', err)
   }
