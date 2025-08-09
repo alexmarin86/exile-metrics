@@ -120,12 +120,6 @@ export const getNewContactMessagesCount = query({
       return pendingMessages.length
     }
 
-    // Count messages created after last admin login
-    const allMessages = await ctx.db.query('ContactMessage').order('desc').collect()
-
-    const newMessages = allMessages.filter(
-      (message) => message._creationTime > args.lastAdminLoginTime!,
-    )
     const newMessages = await ctx.db
       .query('ContactMessage')
       .withIndex('by_creation_time', (q) => q.gt('_creationTime', args.lastAdminLoginTime!))
