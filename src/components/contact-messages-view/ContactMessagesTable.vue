@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Star, AlertTriangle, ArrowDown, Code, Check, Copy } from 'lucide-vue-next'
+import {
+  Star,
+  AlertTriangle,
+  ArrowDown,
+  Code,
+  Check,
+  Copy,
+  EllipsisVertical,
+} from 'lucide-vue-next'
 import {
   Table,
   TableBody,
@@ -10,6 +18,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import type { Id } from '../../../convex/_generated/dataModel'
 
 type MessageStatus =
@@ -102,9 +118,9 @@ const formatDate = (timestamp: number): string => {
             <TableHead class="w-[150px]">User ID</TableHead>
             <TableHead>Subject</TableHead>
             <TableHead>Message</TableHead>
-            <TableHead class="w-[140px]">Status</TableHead>
-            <TableHead class="w-[160px]">Created</TableHead>
-            <TableHead class="w-[200px]">Actions</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Created</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -114,18 +130,16 @@ const formatDate = (timestamp: number): string => {
               <div class="truncate max-w-[10ch] text-sm">
                 {{ message.userId }}
               </div>
-              <button
+              <Button
                 @click="copyToClipboard(message.userId, message._id)"
-                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded z-10 transition-all duration-200"
-                :class="
-                  copiedStates[message._id]
-                    ? 'bg-green-100 dark:bg-green-900/30'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                "
+                variant="ghost"
+                size="icon"
+                class="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 transition-all duration-200"
+                :class="copiedStates[message._id] ? 'bg-green-900/30 hover:bg-green-900/40' : ''"
                 :title="copiedStates[message._id] ? 'Copied!' : `Copy user ID: ${message.userId}`"
               >
                 <Copy :size="14" />
-              </button>
+              </Button>
             </TableCell>
 
             <!-- Subject Cell -->
@@ -163,82 +177,124 @@ const formatDate = (timestamp: number): string => {
             </TableCell>
 
             <!-- Actions Cell -->
-            <TableCell>
-              <div class="flex gap-1">
-                <!-- Starred toggle -->
-                <button
-                  @click="
-                    toggleStatus(message._id, message.status === 'starred' ? 'pending' : 'starred')
-                  "
-                  class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  :class="message.status === 'starred' ? 'text-yellow-500' : 'text-gray-400'"
-                  :title="message.status === 'starred' ? 'Remove from starred' : 'Add to starred'"
-                >
-                  <Star :size="16" :fill="message.status === 'starred' ? 'currentColor' : 'none'" />
-                </button>
+            <TableCell class="text-right">
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="ghost" size="icon">
+                    <EllipsisVertical class="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-48">
+                  <!-- Starred toggle -->
+                  <DropdownMenuItem
+                    @click="
+                      toggleStatus(
+                        message._id,
+                        message.status === 'starred' ? 'pending' : 'starred',
+                      )
+                    "
+                    class="cursor-pointer hover:bg-foreground hover:text-accent-foreground dark:hover:bg-foreground/50"
+                  >
+                    <Star
+                      :size="16"
+                      :fill="message.status === 'starred' ? 'currentColor' : 'none'"
+                      :class="message.status === 'starred' ? 'text-yellow-500' : 'text-gray-400'"
+                      class="mr-2"
+                    />
+                    {{ message.status === 'starred' ? 'Remove from starred' : 'Add to starred' }}
+                  </DropdownMenuItem>
 
-                <!-- High Priority -->
-                <button
-                  @click="
-                    toggleStatus(
-                      message._id,
-                      message.status === 'highPriority' ? 'pending' : 'highPriority',
-                    )
-                  "
-                  class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  :class="message.status === 'highPriority' ? 'text-red-500' : 'text-gray-400'"
-                  title="Toggle high priority"
-                >
-                  <AlertTriangle :size="16" />
-                </button>
+                  <DropdownMenuSeparator />
 
-                <!-- Low Priority -->
-                <button
-                  @click="
-                    toggleStatus(
-                      message._id,
-                      message.status === 'lowPriority' ? 'pending' : 'lowPriority',
-                    )
-                  "
-                  class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  :class="message.status === 'lowPriority' ? 'text-blue-500' : 'text-gray-400'"
-                  title="Toggle low priority"
-                >
-                  <ArrowDown :size="16" />
-                </button>
+                  <!-- High Priority -->
+                  <DropdownMenuItem
+                    @click="
+                      toggleStatus(
+                        message._id,
+                        message.status === 'highPriority' ? 'pending' : 'highPriority',
+                      )
+                    "
+                    class="cursor-pointer hover:bg-foreground hover:text-accent-foreground dark:hover:bg-foreground/50"
+                  >
+                    <AlertTriangle
+                      :size="16"
+                      :class="message.status === 'highPriority' ? 'text-red-500' : 'text-gray-400'"
+                      class="mr-2"
+                    />
+                    {{
+                      message.status === 'highPriority'
+                        ? 'Remove high priority'
+                        : 'Set high priority'
+                    }}
+                  </DropdownMenuItem>
 
-                <!-- Development Queue -->
-                <button
-                  @click="
-                    toggleStatus(
-                      message._id,
-                      message.status === 'inDevelopmentQueue' ? 'pending' : 'inDevelopmentQueue',
-                    )
-                  "
-                  class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  :class="
-                    message.status === 'inDevelopmentQueue' ? 'text-purple-500' : 'text-gray-400'
-                  "
-                  title="Toggle development queue"
-                >
-                  <Code :size="16" />
-                </button>
+                  <!-- Low Priority -->
+                  <DropdownMenuItem
+                    @click="
+                      toggleStatus(
+                        message._id,
+                        message.status === 'lowPriority' ? 'pending' : 'lowPriority',
+                      )
+                    "
+                    class="cursor-pointer hover:bg-foreground hover:text-accent-foreground dark:hover:bg-foreground/50"
+                  >
+                    <ArrowDown
+                      :size="16"
+                      :class="message.status === 'lowPriority' ? 'text-blue-500' : 'text-gray-400'"
+                      class="mr-2"
+                    />
+                    {{
+                      message.status === 'lowPriority' ? 'Remove low priority' : 'Set low priority'
+                    }}
+                  </DropdownMenuItem>
 
-                <!-- Addressed toggle -->
-                <button
-                  @click="
-                    toggleStatus(
-                      message._id,
-                      message.status === 'addressed' ? 'pending' : 'addressed',
-                    )
-                  "
-                  class="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  :class="message.status === 'addressed' ? 'text-green-500' : 'text-gray-400'"
-                  title="Toggle addressed status"
-                >
-                  <Check :size="16" />
-                </button>
-              </div>
+                  <DropdownMenuSeparator />
+
+                  <!-- Development Queue -->
+                  <DropdownMenuItem
+                    @click="
+                      toggleStatus(
+                        message._id,
+                        message.status === 'inDevelopmentQueue' ? 'pending' : 'inDevelopmentQueue',
+                      )
+                    "
+                    class="cursor-pointer hover:bg-foreground hover:text-accent-foreground dark:hover:bg-foreground/50"
+                  >
+                    <Code
+                      :size="16"
+                      :class="
+                        message.status === 'inDevelopmentQueue'
+                          ? 'text-purple-500'
+                          : 'text-gray-400'
+                      "
+                      class="mr-2"
+                    />
+                    {{
+                      message.status === 'inDevelopmentQueue'
+                        ? 'Remove from development queue'
+                        : 'Add to development queue'
+                    }}
+                  </DropdownMenuItem>
+
+                  <!-- Addressed toggle -->
+                  <DropdownMenuItem
+                    @click="
+                      toggleStatus(
+                        message._id,
+                        message.status === 'addressed' ? 'pending' : 'addressed',
+                      )
+                    "
+                    class="cursor-pointer hover:bg-foreground hover:text-accent-foreground dark:hover:bg-foreground/50"
+                  >
+                    <Check
+                      :size="16"
+                      :class="message.status === 'addressed' ? 'text-green-500' : 'text-gray-400'"
+                      class="mr-2"
+                    />
+                    {{ message.status === 'addressed' ? 'Mark as pending' : 'Mark as addressed' }}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TableCell>
           </TableRow>
         </TableBody>
