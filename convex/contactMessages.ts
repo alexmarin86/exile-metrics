@@ -38,6 +38,8 @@ export const submitContactMessage = mutation({
       userId: args.userId,
       subject: args.subject,
       message: args.message,
+      status: 'pending',
+      updatedAt: Date.now(),
     })
 
     return { success: true, message: 'Your message has been sent successfully!' }
@@ -52,5 +54,54 @@ export const getUserContactMessages = query({
       .withIndex('by_user_id', (q) => q.eq('userId', args.userId))
       .order('desc')
       .collect()
+  },
+})
+
+export const getAllContactMessages = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query('ContactMessage').order('desc').collect()
+  },
+})
+
+export const getContactMessagesByStatus = query({
+  args: {
+    status: v.union(
+      v.literal('pending'),
+      v.literal('inDevelopmentQueue'),
+      v.literal('starred'),
+      v.literal('highPriority'),
+      v.literal('lowPriority'),
+      v.literal('addressed'),
+    ),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query('ContactMessage')
+      .withIndex('by_status', (q) => q.eq('status', args.status))
+      .order('desc')
+      .collect()
+  },
+})
+
+export const updateMessageStatus = mutation({
+  args: {
+    messageId: v.id('ContactMessage'),
+    status: v.union(
+      v.literal('pending'),
+      v.literal('inDevelopmentQueue'),
+      v.literal('starred'),
+      v.literal('highPriority'),
+      v.literal('lowPriority'),
+      v.literal('addressed'),
+    ),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.messageId, {
+      status: args.status,
+      updatedAt: Date.now(),
+    })
+
+    return { success: true }
   },
 })
