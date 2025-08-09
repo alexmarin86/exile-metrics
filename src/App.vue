@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
+import NotificationButton from './components/NotificationButton.vue'
 import AppFooter from './components/AppFooter.vue'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
 import { UserRound } from 'lucide-vue-next'
@@ -45,6 +46,7 @@ import 'vue-sonner/style.css'
             </SignInButton>
           </SignedOut>
           <SignedIn>
+            <NotificationButton />
             <UserButton />
           </SignedIn>
           <ThemeSwitcher />

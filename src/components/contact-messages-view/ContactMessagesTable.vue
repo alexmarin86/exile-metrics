@@ -47,20 +47,16 @@ interface ContactMessage {
   updatedAt?: number
 }
 
-// Props
 defineProps<{
   messages: ContactMessage[]
 }>()
 
-// Emits
 const emit = defineEmits<{
   updateStatus: [messageId: Id<'ContactMessage'>, status: MessageStatus]
 }>()
 
-// Reactive state for copy feedback
 const copiedStates = ref<Record<string, boolean>>({})
 
-// Methods
 const toggleStatus = (messageId: Id<'ContactMessage'>, newStatus: MessageStatus) => {
   emit('updateStatus', messageId, newStatus)
 }
@@ -68,9 +64,7 @@ const toggleStatus = (messageId: Id<'ContactMessage'>, newStatus: MessageStatus)
 const copyToClipboard = async (text: string, messageId: string) => {
   try {
     await navigator.clipboard.writeText(text)
-    // Show visual feedback using message ID as key
     copiedStates.value[messageId] = true
-    // Hide feedback after 2 seconds
     setTimeout(() => {
       copiedStates.value[messageId] = false
     }, 2000)
@@ -125,7 +119,6 @@ const formatDate = (timestamp: number): string => {
         </TableHeader>
         <TableBody>
           <TableRow v-for="message in messages" :key="message._id">
-            <!-- User ID Cell with Copy Button -->
             <TableCell class="relative pr-12">
               <div class="truncate max-w-[10ch] text-sm">
                 {{ message.userId }}
@@ -142,21 +135,18 @@ const formatDate = (timestamp: number): string => {
               </Button>
             </TableCell>
 
-            <!-- Subject Cell -->
             <TableCell>
               <div class="max-w-xs truncate text-sm" :title="message.subject">
                 {{ message.subject }}
               </div>
             </TableCell>
 
-            <!-- Message Cell -->
             <TableCell>
               <div class="max-w-md truncate text-sm" :title="message.message">
                 {{ message.message }}
               </div>
             </TableCell>
 
-            <!-- Status Cell -->
             <TableCell>
               <Badge
                 :variant="getStatusVariant(message.status || 'pending')"
@@ -171,12 +161,10 @@ const formatDate = (timestamp: number): string => {
               </Badge>
             </TableCell>
 
-            <!-- Created Cell -->
             <TableCell class="text-sm">
               {{ formatDate(message._creationTime) }}
             </TableCell>
 
-            <!-- Actions Cell -->
             <TableCell class="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
@@ -185,7 +173,6 @@ const formatDate = (timestamp: number): string => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" class="w-48">
-                  <!-- Starred toggle -->
                   <DropdownMenuItem
                     @click="
                       toggleStatus(
@@ -206,7 +193,6 @@ const formatDate = (timestamp: number): string => {
 
                   <DropdownMenuSeparator />
 
-                  <!-- High Priority -->
                   <DropdownMenuItem
                     @click="
                       toggleStatus(
@@ -228,7 +214,6 @@ const formatDate = (timestamp: number): string => {
                     }}
                   </DropdownMenuItem>
 
-                  <!-- Low Priority -->
                   <DropdownMenuItem
                     @click="
                       toggleStatus(
@@ -250,7 +235,6 @@ const formatDate = (timestamp: number): string => {
 
                   <DropdownMenuSeparator />
 
-                  <!-- Development Queue -->
                   <DropdownMenuItem
                     @click="
                       toggleStatus(
@@ -276,7 +260,6 @@ const formatDate = (timestamp: number): string => {
                     }}
                   </DropdownMenuItem>
 
-                  <!-- Addressed toggle -->
                   <DropdownMenuItem
                     @click="
                       toggleStatus(

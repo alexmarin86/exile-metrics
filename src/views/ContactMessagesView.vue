@@ -6,6 +6,7 @@ import { useUser } from '@clerk/vue'
 import LoadState from '@/components/state-components/LoadState.vue'
 import EmptyState from '@/components/state-components/EmptyState.vue'
 import ContactMessagesTable from '@/components/contact-messages-view/ContactMessagesTable.vue'
+import KanbanBoard from '@/components/contact-messages-view/KanbanBoard.vue'
 import type { Id } from '../../convex/_generated/dataModel'
 
 type MessageStatus =
@@ -16,14 +17,10 @@ type MessageStatus =
   | 'lowPriority'
   | 'addressed'
 
-// Auth check
 const { user, isLoaded } = useUser()
 
-// Check if user has admin privileges and contact message permission
 const hasPermission = computed(() => {
   if (!isLoaded.value || !user.value) return false
-
-  // Check if user has admin role and contact_message_access permission
   const orgMembership = user.value.organizationMemberships[0]
   const hasAdminRole = orgMembership?.role === 'org:admin'
   const permissions = orgMembership?.permissions as string[] | undefined
@@ -34,34 +31,31 @@ const hasPermission = computed(() => {
   return hasAdminRole && hasContactPermission
 })
 
-// Reactive data
+// Update last admin login time when viewing this page
+const updateLastLogin = useConvexMutation(api.userSettings.updateLastAdminLogin)
+
 const selectedStatus = ref<string>('')
 const error = ref<string | null>(null)
 
-// Queries
 const { data: allMessages, isLoading: allMessagesLoading } = useConvexQuery(
   api.contactMessages.getAllContactMessages,
   {},
 )
 
-// Only call status query when we have a valid status selected
 const statusQueryArgs = computed(() => ({
   status: selectedStatus.value as MessageStatus,
 }))
 
-// Create a ref that determines if we should fetch by status
 const shouldFetchByStatus = ref(false)
 
 const { data: statusMessages, isLoading: statusMessagesLoading } = useConvexQuery(
   api.contactMessages.getContactMessagesByStatus,
   statusQueryArgs,
   {
-    // Only fetch when we have a valid status selected
     enabled: shouldFetchByStatus,
   },
 )
 
-// Computed values
 const messages = computed(() => {
   if (!hasPermission.value) return []
 
@@ -83,10 +77,8 @@ const isLoading = computed(() => {
   }
 })
 
-// Mutations
 const updateMessageStatusMutation = useConvexMutation(api.contactMessages.updateMessageStatus)
 
-// Methods
 const handleStatusUpdate = async (messageId: Id<'ContactMessage'>, newStatus: MessageStatus) => {
   try {
     await updateMessageStatusMutation.mutate({
@@ -98,14 +90,17 @@ const handleStatusUpdate = async (messageId: Id<'ContactMessage'>, newStatus: Me
   }
 }
 
-// Check permissions on mount
-onMounted(() => {
+onMounted(async () => {
   if (!hasPermission.value && isLoaded.value) {
     error.value = 'You do not have permission to view contact messages'
   }
+
+  // Update last admin login time when viewing messages
+  if (hasPermission.value && user.value?.id) {
+    await updateLastLogin.mutate({ userId: user.value.id })
+  }
 })
 
-// Watch for permission changes
 watch([hasPermission, isLoaded], ([hasPermissionValue, isLoadedValue]) => {
   if (isLoadedValue && !hasPermissionValue) {
     error.value = 'You do not have permission to view contact messages'
@@ -114,7 +109,6 @@ watch([hasPermission, isLoaded], ([hasPermissionValue, isLoadedValue]) => {
   }
 })
 
-// Watch for status selection changes to enable/disable status query
 watch(
   [selectedStatus, hasPermission],
   ([statusValue, permissionValue]) => {
@@ -162,7 +156,13 @@ watch(
       emptyMessage="There are no contact messages to display."
     />
 
-    <!-- Messages Table -->
-    <ContactMessagesTable v-else :messages="messages" @update-status="handleStatusUpdate" />
+    <!-- Main Content -->
+    <div v-else class="space-y-12">
+      <!-- Messages Table -->
+      <ContactMessagesTable :messages="messages" @update-status="handleStatusUpdate" />
+
+      <!-- Kanban Board for In Development Messages -->
+      <KanbanBoard :messages="messages" />
+    </div>
   </div>
 </template>

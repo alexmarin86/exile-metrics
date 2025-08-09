@@ -93,4 +93,9 @@ export default defineSchema({
   })
     .index('by_user_id', ['userId'])
     .index('by_status', ['status']),
+
+  UserSettings: defineTable({
+    userId: v.string(),
+    lastAdminLoginTime: v.optional(v.float64()),
+  }).index('by_user_id', ['userId']),
 })

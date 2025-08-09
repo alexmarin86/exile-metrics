@@ -105,3 +105,28 @@ export const updateMessageStatus = mutation({
     return { success: true }
   },
 })
+
+export const getNewContactMessagesCount = query({
+  args: {
+    lastAdminLoginTime: v.optional(v.float64()),
+  },
+  handler: async (ctx, args) => {
+    // If no last login time provided, count all pending messages
+    if (!args.lastAdminLoginTime) {
+      const pendingMessages = await ctx.db
+        .query('ContactMessage')
+        .withIndex('by_status', (q) => q.eq('status', 'pending'))
+        .collect()
+      return pendingMessages.length
+    }
+
+    // Count messages created after last admin login
+    const allMessages = await ctx.db.query('ContactMessage').order('desc').collect()
+
+    const newMessages = allMessages.filter(
+      (message) => message._creationTime > args.lastAdminLoginTime!,
+    )
+
+    return newMessages.length
+  },
+})
