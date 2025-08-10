@@ -61,6 +61,18 @@ Start the development server with hot-reload:
 pnpm dev
 ```
 
+### Environmental variables
+
+To run the application while in development, you need to create a `.env` file in the root directory and add the following variables:
+
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+VITE_CONVEX_URL=https://your_convex_url
+VITE_GITHUB_URL=https://github.com/your_github_repo
+```
+
+For production, you will need to obtain a CONVEX_DEPLOY_KEY from your Convex dashboard and set it in your deployment environment.
+
 ### Building for Production
 
 Type-check, compile and minify for production:
@@ -74,6 +86,18 @@ Preview the production build:
 ```sh
 pnpm preview
 ```
+
+### Deployment
+
+When you're ready to deploy your application, make sure to set the appropriate environment variables in your hosting provider's dashboard. Also, make sure to update your build command to include the Convex deployment.
+
+Vercel Example:
+
+```sh
+pnpm dlx convex deploy --cmd 'pnpm run build'
+```
+
+For other hosting providers, refer to their documentation for setting environment variables and deploying Node.js applications.
 
 ### Code Quality
 

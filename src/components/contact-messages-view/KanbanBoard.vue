@@ -46,7 +46,8 @@ const createGithubIssue = (message: ContactMessage) => {
   const body = encodeURIComponent(
     `**Original Message:**\n${message.message}\n\n**User ID:** ${message.userId}\n**Created:** ${formatDate(message._creationTime)}\n\n**Status:** In Development Queue`,
   )
-  const url = `https://github.com/alexmarin86/exile-metrics/issues/new?title=${title}&body=${body}&labels=enhancement,from-contact-form`
+  const githubRepoUrl = import.meta.env.VITE_GITHUB_URL ?? ''
+  const url = `${githubRepoUrl}/issues/new?title=${title}&body=${body}&labels=enhancement,from-contact-form`
   window.open(url, '_blank')
 }
 </script>
