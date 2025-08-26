@@ -6,10 +6,10 @@ import { Mail, Github } from 'lucide-vue-next'
 <template>
   <footer class="bg-primary-foreground border-t border-primary/20 mt-auto">
     <div class="container mx-auto px-4 py-6">
-      <nav class="flex flex-col md:flex-row justify-between items-center">
+      <nav class="flex flex-col md:flex-row justify-between items-center gap-2 md:gap-0">
         <RouterLink
           to="/license"
-          class="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-200 mb-4 md:mb-0"
+          class="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors duration-200"
         >
           © {{ new Date().getFullYear() }} Exile Metrics - GPL v3.0 Licensed
         </RouterLink>
