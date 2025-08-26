@@ -105,12 +105,12 @@ import {
       </li>
 
       <li
-        class="flex items-center justify-between gap-4 p-6 bg-primary/80 rounded-lg border border-border"
+        class="flex flex-col md:flex-row items-center justify-between gap-4 p-6 bg-primary/80 rounded-lg border border-border"
       >
         <p class="text-base text-card">
           Ready to dive in? Start tracking your next mapping session now.
         </p>
-        <Button variant="secondary" size="lg">
+        <Button class="self-end md:self-center" variant="secondary" size="lg">
           <RouterLink to="/sessions/new">New session</RouterLink>
           <ArrowRight class="ml-2 w-4 h-4" />
         </Button>
