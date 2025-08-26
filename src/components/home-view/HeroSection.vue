@@ -13,16 +13,16 @@ import {
 
 <template>
   <section
-    class="bg-[image:var(--hero-bg)] bg-no-repeat bg-center min-h-[80dvh] dark:mask-radial-from-60% dark:mask-ellipse shadow-background shadow-lg p-12"
+    class="bg-[image:var(--hero-bg)] bg-no-repeat bg-center min-h-[80dvh] dark:mask-radial-from-60% dark:mask-ellipse shadow-background shadow-lg p-12 bg-cover xl:bg-auto"
   >
     <h1
-      class="text-5xl font-semibold text-center text-background dark:text-foreground text-balance w-4/6 mx-auto leading-14 tracking-tight"
+      class="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-center text-background dark:text-foreground text-balance w-4/6 mx-auto leading-14 tracking-tight"
     >
       Track your <span class="text-accent font-bold">farming sessions</span> with minimal
       configuration!
     </h1>
     <ul
-      class="text-muted-foreground text-base grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16"
+      class="text-muted-foreground text-base grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-16"
     >
       <li class="flex items-center bg-primary-foreground/80 p-6 rounded-lg gap-4">
         <div class="w-16 h-16">
