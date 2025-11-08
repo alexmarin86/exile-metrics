@@ -16,13 +16,12 @@ const props = defineProps<{
 const currentStrategyDivPerHour = computed(() => {
   if (
     !props.session.totalReturns ||
-    !props.session.totalCost ||
     !props.session.totalDuration ||
     !props.session.divCost
   ) {
     return 0
   }
-  const strategyProfit = props.session.totalReturns - props.session.totalCost
+  const strategyProfit = props.session.totalCost ? props.session.totalReturns - props.session.totalCost : props.session.totalReturns
   const profitInDivines = strategyProfit / props.session.divCost
   const oneHourInMs = 1000 * 60 * 60
   const hoursPlayed = props.session.totalDuration / oneHourInMs
@@ -83,33 +82,20 @@ const chartData = computed(() => {
 <template>
   <Card class="shadow-sm rounded-2xl">
     <CardHeader>
-      <CardTitle class="text-foreground text-lg font-semibold"
-        >Strategy Comparison
-        <small class="text-muted-foreground ml-2"
-          >* Chart is in alpha, will fix asap</small
-        ></CardTitle
-      >
+      <CardTitle class="text-foreground text-lg font-semibold">Strategy Comparison
+        <small class="text-muted-foreground ml-2">* Chart is in alpha, will fix asap</small>
+      </CardTitle>
     </CardHeader>
     <CardContent class="space-y-4">
       <LoadState v-if="isLoading" loading-message="Loading farming sessions..." />
       <div v-else class="space-y-3">
-        <BarChart
-          v-if="chartData.length > 0"
-          :data="chartData"
-          index="name"
-          :categories="['divPerHour', 'divPerMap']"
-          :colors="['var(--primary)', 'var(--accent)']"
-          :y-formatter="
-            (tick, i) => {
-              return typeof tick === 'number'
-                ? `${new Intl.NumberFormat('us').format(tick).toString()} div`
-                : ''
-            }
-          "
-          class="h-[280px]"
-          :show-x-axis="true"
-          :show-y-axis="true"
-        />
+        <BarChart v-if="chartData.length > 0" :data="chartData" index="name" :categories="['divPerHour', 'divPerMap']"
+          :colors="['var(--primary)', 'var(--accent)']" :y-formatter="(tick, i) => {
+            return typeof tick === 'number'
+              ? `${new Intl.NumberFormat('us').format(tick).toString()} div`
+              : ''
+          }
+            " class="h-[280px]" :show-x-axis="true" :show-y-axis="true" />
 
         <div v-else class="flex items-center justify-center py-8">
           <span class="text-muted-foreground">No session data available for comparison</span>
