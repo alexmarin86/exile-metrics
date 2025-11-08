@@ -48,11 +48,11 @@ function getDivPerMap(session: FarmingSession): number {
 
 function getDivPerHour(session: FarmingSession): number {
   if (!session.totalDuration || session.totalDuration === 0) return 0
-  if (!session.totalReturns || !session.totalCost) return 0
+  if (!session.totalReturns) return 0
   if (!session.divCost) return 0
   const oneHourInMs = 1000 * 60 * 60
   const hoursPlayed = session.totalDuration / oneHourInMs
-  const profitInDivines = (session.totalReturns - session.totalCost) / session.divCost
+  const profitInDivines = (session.totalReturns - (session.totalCost ?? 0)) / session.divCost
   return Math.round((profitInDivines / hoursPlayed) * 100) / 100
 }
 
