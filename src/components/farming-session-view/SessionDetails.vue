@@ -10,8 +10,11 @@ const props = defineProps<{
 }>()
 
 const strategyProfit = computed(() => {
-  if (!props.session.totalReturns || !props.session.totalCost) {
+  if (!props.session.totalReturns) {
     return 0
+  }
+  if (!props.session.totalCost) {
+    return props.session.totalReturns
   }
   return props.session.totalReturns - props.session.totalCost
 })
@@ -82,14 +85,10 @@ const formatDivines = (value: number) => {
           </div>
           <div>
             <span class="text-muted-foreground">Net Profit:</span>
-            <p
-              class="font-semibold"
-              :class="
-                strategyProfit >= 0
-                  ? 'text-green-600 dark:text-green-400'
-                  : 'text-red-600 dark:text-red-400'
-              "
-            >
+            <p class="font-semibold" :class="strategyProfit >= 0
+                ? 'text-green-600 dark:text-green-400'
+                : 'text-red-600 dark:text-red-400'
+              ">
               {{ strategyProfit >= 0 ? '+' : '' }}{{ formatChaos(strategyProfit) }}c
             </p>
           </div>
