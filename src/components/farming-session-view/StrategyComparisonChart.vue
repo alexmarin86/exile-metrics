@@ -40,9 +40,9 @@ const otherSessions = computed(() => {
 
 function getDivPerMap(session: FarmingSession): number {
   if (!session.numberOfMaps || session.numberOfMaps === 0) return 0
-  if (!session.totalReturns || !session.totalCost) return 0
+  if (!session.totalReturns) return 0
   if (!session.divCost) return 0
-  const profitInDivines = (session.totalReturns - session.totalCost) / session.divCost
+  const profitInDivines = (session.totalReturns - (session.totalCost ?? 0)) / session.divCost
   return Math.round((profitInDivines / session.numberOfMaps) * 100) / 100
 }
 
