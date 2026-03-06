@@ -61,6 +61,23 @@ export default defineSchema({
     isUsingMapCraft: v.boolean(),
     mapCraftName: v.optional(v.string()),
     mapCraftPrice: v.optional(v.float64()),
+    // astrolabe info (added March 2026)
+    isUsingAstrolabe: v.optional(v.boolean()),
+    astrolabeName: v.optional(
+      v.union(
+        v.literal('Chaotic Astrolabe'),
+        v.literal('Enshrouded Astrolabe'),
+        v.literal('Fruiting Astrolabe'),
+        v.literal('Fungal Astrolabe'),
+        v.literal('Grasping Astrolabe'),
+        v.literal('Lightless Astrolabe'),
+        v.literal('Nameless Astrolabe'),
+        v.literal('Runic Astrolabe'),
+        v.literal('Templar Astrolabe'),
+        v.literal('Timeless Astrolabe'),
+      ),
+    ),
+    astrolabePrice: v.optional(v.float64()),
   }).index('by_user_id', ['userId']),
 
   Stint: defineTable({

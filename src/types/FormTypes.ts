@@ -31,6 +31,9 @@ export interface MapInfoFormData {
   isUsingMapCraft: boolean
   mapCraftName?: string
   mapCraftPrice?: number
+  isUsingAstrolabe: boolean
+  astrolabeName?: string
+  astrolabePrice?: number
 }
 
 // Basic map info without chisels, scarabs, and crafts - for EditInfoSection

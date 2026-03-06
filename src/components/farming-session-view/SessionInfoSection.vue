@@ -42,6 +42,9 @@ const props = defineProps<{
             </li>
           </ul>
         </div>
+        <div v-if="props.session.isUsingAstrolabe && props.session.astrolabeName">
+          <span class="font-semibold">Astrolabe:</span> {{ props.session.astrolabeName }}
+        </div>
       </CardContent>
     </Card>
 
@@ -54,6 +57,8 @@ const props = defineProps<{
       scarabs: props.session.scarabs,
       isUsingMapCraft: props.session.isUsingMapCraft,
       mapCraftPrice: props.session.mapCraftPrice,
+      isUsingAstrolabe: props.session.isUsingAstrolabe,
+      astrolabePrice: props.session.astrolabePrice,
     }" :totalCost="props.session.totalCost" :session="props.session" />
   </div>
 </template>

@@ -109,6 +109,9 @@ export function useFarmingSessionForm() {
         isUsingMapCraft: form.values.isUsingMapCraft || false,
         mapCraftName: form.values.mapCraftName,
         mapCraftPrice: form.values.mapCraftPrice,
+        isUsingAstrolabe: form.values.isUsingAstrolabe || false,
+        astrolabeName: form.values.astrolabeName,
+        astrolabePrice: form.values.astrolabePrice,
       },
       setFieldValue: (field: string, value: unknown) =>
         form.setFieldValue(

@@ -5,7 +5,7 @@ import * as z from 'zod'
 import { useConvexMutation } from '@convex-vue/core'
 import { api } from '../../../convex/_generated/api'
 import { toast } from 'vue-sonner'
-import { ChiselNames } from '@/utils/farmingSessionSchema'
+import { ChiselNames, AstrolabeNames } from '@/utils/farmingSessionSchema'
 import {
   Dialog,
   DialogContent,
@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import ChiselsCraftSection from '@/components/new-farming-session-view/form-sections/ChiselsCraftSection.vue'
 import ScarabsSection from '@/components/new-farming-session-view/form-sections/ScarabsSection.vue'
+import AstrolabeSection from '@/components/new-farming-session-view/form-sections/AstrolabeSection.vue'
 import type { Doc } from '../../../convex/_generated/dataModel'
 import type { GenericForm, FullFormData } from '@/types/FormTypes'
 import { computed, ref, watch } from 'vue'
@@ -47,6 +48,9 @@ type CostFormData = {
   isUsingMapCraft?: boolean
   mapCraftName?: string
   mapCraftPrice?: number
+  isUsingAstrolabe?: boolean
+  astrolabeName?: string
+  astrolabePrice?: number
 }
 
 type FarmingSession = Doc<'FarmingSession'>
@@ -114,6 +118,9 @@ const getInitialValues = (): CostFormData => {
     isUsingMapCraft: props.session.isUsingMapCraft,
     mapCraftName: props.session.mapCraftName,
     mapCraftPrice: props.session.mapCraftPrice,
+    isUsingAstrolabe: props.session.isUsingAstrolabe ?? false,
+    astrolabeName: props.session.astrolabeName,
+    astrolabePrice: props.session.astrolabePrice,
   }
 
   saveToCache(sessionValues)
@@ -140,6 +147,10 @@ const editCostSchema = toTypedSchema(
       isUsingMapCraft: z.boolean(),
       mapCraftName: z.string().max(50).optional(),
       mapCraftPrice: z.number().optional(),
+      //astrolabe info
+      isUsingAstrolabe: z.boolean(),
+      astrolabeName: AstrolabeNames.optional(),
+      astrolabePrice: z.number().optional(),
     })
     .superRefine((data, ctx) => {
       if (data.isUsingChisels) {
@@ -201,6 +212,15 @@ const editCostSchema = toTypedSchema(
           })
         }
       }
+      if (data.isUsingAstrolabe) {
+        if (data.astrolabePrice === undefined) {
+          ctx.addIssue({
+            code: 'custom',
+            message: 'Astrolabe price is required',
+            path: ['astrolabePrice'],
+          })
+        }
+      }
     }),
 )
 
@@ -246,6 +266,9 @@ const fullFormWrapper = computed(
       isUsingMapCraft: form.values.isUsingMapCraft || false,
       mapCraftName: form.values.mapCraftName,
       mapCraftPrice: form.values.mapCraftPrice,
+      isUsingAstrolabe: form.values.isUsingAstrolabe || false,
+      astrolabeName: form.values.astrolabeName,
+      astrolabePrice: form.values.astrolabePrice,
     },
     setFieldValue: (field: string, value: unknown) => {
       // Type assertion needed for dynamic field paths
@@ -289,6 +312,9 @@ const onSubmit = form.handleSubmit(async (values) => {
       isUsingMapCraft: values.isUsingMapCraft,
       mapCraftName: values.mapCraftName,
       mapCraftPrice: values.mapCraftPrice,
+      isUsingAstrolabe: values.isUsingAstrolabe,
+      astrolabeName: values.astrolabeName,
+      astrolabePrice: values.astrolabePrice,
     })
 
     clearCache()
@@ -370,6 +396,8 @@ const onSubmit = form.handleSubmit(async (values) => {
         </div>
 
         <ScarabsSection :form="fullFormWrapper" @add-scarab-row="addScarabRow" @remove-scarab-row="removeScarabRow" />
+
+        <AstrolabeSection :form="fullFormWrapper" />
 
         <DialogFooter>
           <DialogTrigger as-child>

@@ -11,6 +11,20 @@ export const ChiselNames = z.enum([
   "Maven's Chisel of Scarabs",
 ])
 
+// Astrolabes added in March 2026 expansion
+export const AstrolabeNames = z.enum([
+  'Chaotic Astrolabe',
+  'Enshrouded Astrolabe',
+  'Fruiting Astrolabe',
+  'Fungal Astrolabe',
+  'Grasping Astrolabe',
+  'Lightless Astrolabe',
+  'Nameless Astrolabe',
+  'Runic Astrolabe',
+  'Templar Astrolabe',
+  'Timeless Astrolabe',
+])
+
 export const farmingSessionSchema = toTypedSchema(
   z
     .object({
@@ -42,6 +56,10 @@ export const farmingSessionSchema = toTypedSchema(
       isUsingMapCraft: z.boolean(),
       mapCraftName: z.string().max(50).optional(),
       mapCraftPrice: z.number().optional(),
+      //astrolabe info (added March 2026)
+      isUsingAstrolabe: z.boolean(),
+      astrolabeName: AstrolabeNames.optional(),
+      astrolabePrice: z.number().optional(),
     })
     .superRefine((data, ctx) => {
       if (!data.isSelfFarmed) {
@@ -112,6 +130,15 @@ export const farmingSessionSchema = toTypedSchema(
           })
         }
       }
+      if (data.isUsingAstrolabe) {
+        if (data.astrolabePrice === undefined) {
+          ctx.addIssue({
+            code: 'custom',
+            message: 'Astrolabe price is required',
+            path: ['astrolabePrice'],
+          })
+        }
+      }
     }),
 )
 
@@ -137,6 +164,9 @@ export const initialFormValues = {
   isUsingMapCraft: false,
   mapCraftName: '',
   mapCraftPrice: undefined,
+  isUsingAstrolabe: true,
+  astrolabeName: undefined,
+  astrolabePrice: undefined,
 }
 
 export type FarmingSessionFormValues = typeof initialFormValues

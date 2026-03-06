@@ -21,6 +21,8 @@ const props = defineProps<{
     scarabs?: Scarab[]
     isUsingMapCraft: boolean
     mapCraftPrice?: number
+    isUsingAstrolabe?: boolean
+    astrolabePrice?: number
   }
   totalCost?: number
   session?: FarmingSession
@@ -65,6 +67,13 @@ const breakdown = computed(() => {
     })
   }
 
+  if (v.isUsingAstrolabe && v.astrolabePrice) {
+    items.push({
+      label: `Astrolabe (${v.astrolabePrice}) ⚠️ Incomplete calculation`,
+      cost: v.astrolabePrice,
+    })
+  }
+
   return items
 })
 
@@ -74,7 +83,7 @@ watchEffect(() => {
   if (props.totalCost !== undefined && props.totalCost !== total.value) {
     console.warn(
       `[CostSummary] Stored total (${props.totalCost}) ` +
-        `does not match computed total (${total.value}).`,
+      `does not match computed total (${total.value}).`,
     )
     // TODO: later replace with external logger
   }

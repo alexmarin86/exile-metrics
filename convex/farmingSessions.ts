@@ -49,6 +49,23 @@ export const addNewSession = mutation({
     isUsingMapCraft: v.boolean(),
     mapCraftName: v.optional(v.string()),
     mapCraftPrice: v.optional(v.float64()),
+    // astrolabe info
+    isUsingAstrolabe: v.optional(v.boolean()),
+    astrolabeName: v.optional(
+      v.union(
+        v.literal('Chaotic Astrolabe'),
+        v.literal('Enshrouded Astrolabe'),
+        v.literal('Fruiting Astrolabe'),
+        v.literal('Fungal Astrolabe'),
+        v.literal('Grasping Astrolabe'),
+        v.literal('Lightless Astrolabe'),
+        v.literal('Nameless Astrolabe'),
+        v.literal('Runic Astrolabe'),
+        v.literal('Templar Astrolabe'),
+        v.literal('Timeless Astrolabe'),
+      ),
+    ),
+    astrolabePrice: v.optional(v.float64()),
   },
   handler: async (ctx, args) => {
     const farmingSessionId = await ctx.db.insert('FarmingSession', args)
@@ -289,6 +306,23 @@ export const updateSessionCost = mutation({
     isUsingMapCraft: v.boolean(),
     mapCraftName: v.optional(v.string()),
     mapCraftPrice: v.optional(v.float64()),
+    // astrolabe info
+    isUsingAstrolabe: v.optional(v.boolean()),
+    astrolabeName: v.optional(
+      v.union(
+        v.literal('Chaotic Astrolabe'),
+        v.literal('Enshrouded Astrolabe'),
+        v.literal('Fruiting Astrolabe'),
+        v.literal('Fungal Astrolabe'),
+        v.literal('Grasping Astrolabe'),
+        v.literal('Lightless Astrolabe'),
+        v.literal('Nameless Astrolabe'),
+        v.literal('Runic Astrolabe'),
+        v.literal('Templar Astrolabe'),
+        v.literal('Timeless Astrolabe'),
+      ),
+    ),
+    astrolabePrice: v.optional(v.float64()),
   },
   handler: async (ctx, args) => {
     const session = await ctx.db.get(args.sessionId)
@@ -309,13 +343,17 @@ export const updateSessionCost = mutation({
     const mapCost = session.isSelfFarmed ? 0 : (session.mapCost ?? 0)
     const chiselCost = args.isUsingChisels ? (args.chiselPrice ?? 0) * 4 : 0
     const mapCraftCost = args.isUsingMapCraft ? (args.mapCraftPrice ?? 0) : 0
+    // TODO: Astrolabe cost calculation is incomplete - needs to account for durability
+    // Should be: (numberOfMaps / mapsPerAstrolabe) * astrolabePrice where the division should be rounded up since you can't use a fraction of an astrolabe. For example, if mapsPerAstrolabe is 10 and you run 15 maps, you would need 2 astrolabes (1 for the first 10 maps and another for the remaining 5 maps).
+    const astrolabeCost = args.isUsingAstrolabe ? (args.astrolabePrice ?? 0) : 0
 
     const scarabCost =
       args.isUsingScarabs && args.scarabs
         ? args.scarabs.reduce((sum, s) => sum + s.quantity * s.price, 0)
         : 0
 
-    const totalCost = (mapCost + chiselCost + scarabCost + mapCraftCost) * session.numberOfMaps
+    const totalCost =
+      (mapCost + chiselCost + scarabCost + mapCraftCost) * session.numberOfMaps + astrolabeCost
 
     await ctx.db.patch(args.sessionId, {
       isUsingChisels: args.isUsingChisels,
@@ -326,6 +364,9 @@ export const updateSessionCost = mutation({
       isUsingMapCraft: args.isUsingMapCraft,
       mapCraftName: args.mapCraftName,
       mapCraftPrice: args.mapCraftPrice,
+      isUsingAstrolabe: args.isUsingAstrolabe,
+      astrolabeName: args.astrolabeName,
+      astrolabePrice: args.astrolabePrice,
       totalCost: totalCost,
       updatedAt: Date.now(),
     })

@@ -11,6 +11,7 @@ import SessionInfoFormSection from '@/components/new-farming-session-view/form-s
 import MapInfoSection from '@/components/new-farming-session-view/form-sections/MapInfoSection.vue'
 import ChiselsCraftSection from '@/components/new-farming-session-view/form-sections/ChiselsCraftSection.vue'
 import ScarabsSection from '@/components/new-farming-session-view/form-sections/ScarabsSection.vue'
+import AstrolabeSection from '@/components/new-farming-session-view/form-sections/AstrolabeSection.vue'
 import { toast } from 'vue-sonner'
 
 const router = useRouter()
@@ -59,10 +60,10 @@ const onSubmit = form.handleSubmit((values) => {
   }
   const scarabArray = values.isUsingScarabs
     ? values.scarabs.map((scarab) => ({
-        name: scarab.name ?? '',
-        quantity: scarab.quantity ?? 1,
-        price: scarab.price ?? 0,
-      }))
+      name: scarab.name ?? '',
+      quantity: scarab.quantity ?? 1,
+      price: scarab.price ?? 0,
+    }))
     : []
   addSession({
     userId: user.value.id,
@@ -82,6 +83,9 @@ const onSubmit = form.handleSubmit((values) => {
     isUsingMapCraft: values.isUsingMapCraft,
     mapCraftName: values.mapCraftName,
     mapCraftPrice: values.mapCraftPrice,
+    isUsingAstrolabe: values.isUsingAstrolabe,
+    astrolabeName: values.astrolabeName,
+    astrolabePrice: values.astrolabePrice,
     isConcluded: false,
     sessionDescription: values.sessionDescription,
     sessionName: values.sessionName,
@@ -98,11 +102,8 @@ const onSubmit = form.handleSubmit((values) => {
         <SessionInfoFormSection :form="sessionFormAdapter" />
         <MapInfoSection :form="mapFormAdapter" />
         <ChiselsCraftSection :form="fullFormAdapter" />
-        <ScarabsSection
-          :form="fullFormAdapter"
-          @add-scarab-row="addScarabRow"
-          @remove-scarab-row="removeScarabRow"
-        />
+        <ScarabsSection :form="fullFormAdapter" @add-scarab-row="addScarabRow" @remove-scarab-row="removeScarabRow" />
+        <AstrolabeSection :form="fullFormAdapter" />
       </div>
       <Button type="submit" class="ml-auto mr-6 block" v-if="isLoading" disabled>
         Submitting...
@@ -112,13 +113,10 @@ const onSubmit = form.handleSubmit((values) => {
         You will be redirected to the session page after submission.
       </small>
     </form>
-    <CostSummary
-      :values="
-        {
-          ...form.values,
-          numberOfMaps: form.values.numberOfMaps ?? 1,
-        } as any
-      "
-    />
+    <CostSummary :values="{
+        ...form.values,
+        numberOfMaps: form.values.numberOfMaps ?? 1,
+      } as any
+      " />
   </div>
 </template>

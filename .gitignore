@@ -34,3 +34,6 @@ coverage
 
 # env
 .env
+
+# convex generated types
+/convex/_generated/
