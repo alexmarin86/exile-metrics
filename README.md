@@ -4,11 +4,11 @@ A free and open source farming session tracking application built specifically f
 
 ## About
 
-Exile Metrics helps you measure the profitability of different mapping strategies by tracking your time investment, costs, and returns in an intuitive and streamlined way. Whether you're running scarab strategies, testing different map crafts, or comparing the efficiency of various farming methods, Exile Metrics provides the data you need to make informed decisions.
+Exile Metrics helps you measure the profitability of different mapping strategies by tracking your time investment, costs, and returns in an intuitive and streamlined way. Whether you're running scarab strategies, using chisels, or comparing the efficiency of various farming methods, Exile Metrics provides the data you need to make informed decisions.
 
 ### Key Features
 
-- **Session Tracking**: Create detailed farming sessions with map information, scarab usage, chisel costs, and map device crafts
+- **Session Tracking**: Create detailed farming sessions with map information, scarab usage, and chisel costs (legacy sessions also support Cartographer's Chisels and map device crafts)
 - **Time Management**: Built-in stint timer system to accurately measure time spent mapping
 - **Cost Analysis**: Comprehensive cost breakdown with automatic profit calculations
 - **Strategy Comparison**: Visual charts comparing different farming strategies side by side

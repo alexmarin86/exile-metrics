@@ -1,9 +1,9 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
-/* chisel array:
+/* chisel array (Cartographer's Chisel is legacy, removed March 2026):
 const CHISELS = [
-  "Cartographer's Chisel",
+  "Cartographer's Chisel", // Legacy only
   "Maven's Chisel of Avarice",
   "Maven's Chisel of Divination",
   "Maven's Chisel of Procurement",
@@ -33,11 +33,11 @@ export default defineSchema({
     isSelfFarmed: v.boolean(),
     mapCost: v.optional(v.float64()),
     numberOfMaps: v.float64(),
-    // chisel info
+    // chisel info (Cartographer's Chisel kept for backward compatibility)
     isUsingChisels: v.boolean(),
     chiselName: v.optional(
       v.union(
-        v.literal("Cartographer's Chisel"),
+        v.literal("Cartographer's Chisel"), // Legacy only
         v.literal("Maven's Chisel of Avarice"),
         v.literal("Maven's Chisel of Divination"),
         v.literal("Maven's Chisel of Procurement"),
@@ -57,7 +57,7 @@ export default defineSchema({
         }),
       ),
     ),
-    // map craft info
+    // map craft info (removed March 2026, kept for backward compatibility)
     isUsingMapCraft: v.boolean(),
     mapCraftName: v.optional(v.string()),
     mapCraftPrice: v.optional(v.float64()),

@@ -83,7 +83,6 @@ const chartData = computed(() => {
   <Card class="shadow-sm rounded-2xl">
     <CardHeader>
       <CardTitle class="text-foreground text-lg font-semibold">Strategy Comparison
-        <small class="text-muted-foreground ml-2">* Chart is in alpha, will fix asap</small>
       </CardTitle>
     </CardHeader>
     <CardContent class="space-y-4">

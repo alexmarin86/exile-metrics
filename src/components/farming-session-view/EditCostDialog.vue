@@ -17,6 +17,16 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { FilePen } from 'lucide-vue-next'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 import ChiselsCraftSection from '@/components/new-farming-session-view/form-sections/ChiselsCraftSection.vue'
 import ScarabsSection from '@/components/new-farming-session-view/form-sections/ScarabsSection.vue'
 import type { Doc } from '../../../convex/_generated/dataModel'
@@ -46,6 +56,13 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+// March 6, 2026 00:00:00 UTC - sessions created before this date have map crafts
+const MAP_CRAFT_REMOVAL_DATE = new Date('2026-03-06T00:00:00Z').getTime()
+
+const isLegacySession = computed(() => {
+  return props.session.createdAt < MAP_CRAFT_REMOVAL_DATE
+})
 
 const isDialogOpen = ref(false)
 
@@ -297,25 +314,67 @@ const onSubmit = form.handleSubmit(async (values) => {
       <DialogHeader>
         <DialogTitle class="text-foreground">Edit Cost Settings</DialogTitle>
         <DialogDescription>
-          Update the chisels, scarabs, and map craft settings that affect the cost calculation.
+          <template v-if="isLegacySession">
+            Update the chisels, scarabs, and map craft settings that affect the cost calculation.
+          </template>
+          <template v-else>
+            Update the chisels and scarabs settings that affect the cost calculation.
+          </template>
         </DialogDescription>
       </DialogHeader>
 
       <form @submit="onSubmit" class="space-y-6">
         <ChiselsCraftSection :form="fullFormWrapper" />
-        <ScarabsSection
-          :form="fullFormWrapper"
-          @add-scarab-row="addScarabRow"
-          @remove-scarab-row="removeScarabRow"
-        />
+
+        <!-- Legacy Map Craft Section - Only for sessions created before March 6, 2026 -->
+        <div v-if="isLegacySession" class="space-y-4">
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-bold">Map Craft Info</h2>
+            <span class="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Legacy Feature</span>
+          </div>
+          <FormField v-slot="{ value, handleChange }" name="isUsingMapCraft">
+            <FormItem class="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div class="space-y-0.5">
+                <FormLabel class="text-base">Are you using a map device craft?</FormLabel>
+                <FormDescription>
+                  Map crafts were removed in the March 2026 expansion.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch :model-value="value" @update:model-value="handleChange" />
+              </FormControl>
+            </FormItem>
+          </FormField>
+          <div class="grid grid-cols-2 gap-4">
+            <FormField v-slot="{ componentField }" name="mapCraftName">
+              <FormItem>
+                <FormLabel>Map Craft Name</FormLabel>
+                <FormControl>
+                  <Input type="text" v-bind="componentField" placeholder="Anarchy..."
+                    :disabled="!form.values.isUsingMapCraft" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+            <FormField v-slot="{ componentField }" name="mapCraftPrice">
+              <FormItem>
+                <FormLabel>Map Craft Price</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="10" step="1" v-bind="componentField"
+                    :disabled="!form.values.isUsingMapCraft" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+          </div>
+        </div>
+
+        <ScarabsSection :form="fullFormWrapper" @add-scarab-row="addScarabRow" @remove-scarab-row="removeScarabRow" />
 
         <DialogFooter>
           <DialogTrigger as-child>
-            <Button
-              type="button"
-              variant="outline"
-              class="bg-background text-foreground hover:bg-background/80 hover:text-foreground"
-            >
+            <Button type="button" variant="outline"
+              class="bg-background text-foreground hover:bg-background/80 hover:text-foreground">
               Cancel
             </Button>
           </DialogTrigger>

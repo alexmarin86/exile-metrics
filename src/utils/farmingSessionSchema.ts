@@ -1,6 +1,7 @@
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 
+// Includes Cartographer's Chisel for backward compatibility (removed March 2026)
 export const ChiselNames = z.enum([
   "Cartographer's Chisel",
   "Maven's Chisel of Avarice",
@@ -24,7 +25,7 @@ export const farmingSessionSchema = toTypedSchema(
       isSelfFarmed: z.boolean(),
       mapCost: z.number().optional(),
       numberOfMaps: z.number().min(1).max(1000),
-      //chisels info
+      //chisels info (Cartographer's Chisel kept for backward compatibility)
       isUsingChisels: z.boolean(),
       chiselName: ChiselNames.optional(),
       chiselPrice: z.number().optional(),
@@ -37,7 +38,7 @@ export const farmingSessionSchema = toTypedSchema(
           price: z.number().optional(),
         }),
       ),
-      //map device craft info
+      //map device craft info (removed March 2026, kept for backward compatibility)
       isUsingMapCraft: z.boolean(),
       mapCraftName: z.string().max(50).optional(),
       mapCraftPrice: z.number().optional(),
@@ -125,7 +126,7 @@ export const initialFormValues = {
   mapCost: undefined,
   numberOfMaps: 1,
   isUsingChisels: true,
-  chiselName: "Cartographer's Chisel" as const,
+  chiselName: "Maven's Chisel of Avarice" as const,
   chiselPrice: undefined,
   isUsingScarabs: true,
   scarabs: [] as Array<{
@@ -133,7 +134,7 @@ export const initialFormValues = {
     quantity?: number
     price?: number
   }>,
-  isUsingMapCraft: true,
+  isUsingMapCraft: false,
   mapCraftName: '',
   mapCraftPrice: undefined,
 }

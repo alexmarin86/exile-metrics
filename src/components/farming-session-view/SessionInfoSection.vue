@@ -20,20 +20,18 @@ const props = defineProps<{
           <span>{{ props.session.sessionName }}</span>
           <EditInfoSection v-if="!props.session.isConcluded" :session="props.session" />
         </CardTitle>
-        <p
-          class="text-sm text-muted-foreground whitespace-pre-line"
-          v-html="linkifyAndSanitize(session.sessionDescription)"
-        ></p>
+        <p class="text-sm text-muted-foreground whitespace-pre-line"
+          v-html="linkifyAndSanitize(session.sessionDescription)"></p>
       </CardHeader>
       <CardContent class="space-y-2 text-sm">
         <div>
           <span class="font-semibold">Map:</span>
           {{ props.session.isRandomMap ? 'Random' : props.session.mapName }}
         </div>
-        <div v-if="props.session.isUsingMapCraft">
+        <div v-if="props.session.isUsingMapCraft && props.session.mapCraftName">
           <span class="font-semibold">Map Craft:</span> {{ props.session.mapCraftName }}
         </div>
-        <div v-if="props.session.isUsingChisels">
+        <div v-if="props.session.isUsingChisels && props.session.chiselName">
           <span class="font-semibold">Chisels:</span> {{ props.session.chiselName }}
         </div>
         <div v-if="props.session.isUsingScarabs">
@@ -47,19 +45,15 @@ const props = defineProps<{
       </CardContent>
     </Card>
 
-    <CostSummary
-      :values="{
-        numberOfMaps: props.session.numberOfMaps,
-        mapCost: props.session.mapCost,
-        isUsingChisels: props.session.isUsingChisels,
-        chiselPrice: props.session.chiselPrice,
-        isUsingScarabs: props.session.isUsingScarabs,
-        scarabs: props.session.scarabs,
-        isUsingMapCraft: props.session.isUsingMapCraft,
-        mapCraftPrice: props.session.mapCraftPrice,
-      }"
-      :totalCost="props.session.totalCost"
-      :session="props.session"
-    />
+    <CostSummary :values="{
+      numberOfMaps: props.session.numberOfMaps,
+      mapCost: props.session.mapCost,
+      isUsingChisels: props.session.isUsingChisels,
+      chiselPrice: props.session.chiselPrice,
+      isUsingScarabs: props.session.isUsingScarabs,
+      scarabs: props.session.scarabs,
+      isUsingMapCraft: props.session.isUsingMapCraft,
+      mapCraftPrice: props.session.mapCraftPrice,
+    }" :totalCost="props.session.totalCost" :session="props.session" />
   </div>
 </template>

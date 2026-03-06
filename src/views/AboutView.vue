@@ -33,8 +33,8 @@ import { RouterLink } from 'vue-router'
         <div class="bg-card rounded-lg p-6 border">
           <h3 class="text-xl font-semibold mb-3 text-foreground">Session Tracking</h3>
           <p class="text-muted-foreground">
-            Create detailed farming sessions with map information, scarab usage, chisel costs, and
-            map device crafts. Track multiple sessions and compare their effectiveness.
+            Create detailed farming sessions with map information, scarab usage and chisel costs. Track multiple
+            sessions and compare their effectiveness. Legacy support for map device crafts.
           </p>
         </div>
 
@@ -49,7 +49,8 @@ import { RouterLink } from 'vue-router'
         <div class="bg-card rounded-lg p-6 border">
           <h3 class="text-xl font-semibold mb-3 text-foreground">Cost Analysis</h3>
           <p class="text-muted-foreground">
-            Comprehensive cost breakdown including maps, scarabs, chisels, and crafting costs.
+            Comprehensive cost breakdown including maps, scarabs and chisels (legacy sessions also include crafting
+            costs).
             Automatic calculations help you understand your true profit margins.
           </p>
         </div>
@@ -70,10 +71,8 @@ import { RouterLink } from 'vue-router'
       <div class="bg-primary-foreground/60 rounded-lg p-8 border">
         <div class="prose prose-lg max-w-none dark:prose-invert">
           <p>
-            <strong
-              >Exile Metrics is designed for Path of Exile players who hate overcomplicating
-              things.</strong
-            >
+            <strong>Exile Metrics is designed for Path of Exile players who hate overcomplicating
+              things.</strong>
             We believe that tracking your farming efficiency shouldn't require complex spreadsheets,
             custom setups, or hours of configuration.
           </p>
@@ -90,9 +89,7 @@ import { RouterLink } from 'vue-router'
     <!-- Free and Open Source -->
     <section class="space-y-6">
       <h2 class="text-3xl font-semibold text-foreground">Free and Open Source</h2>
-      <div
-        class="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-8"
-      >
+      <div class="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-8">
         <div class="prose prose-lg max-w-none dark:prose-invert">
           <p class="text-green-800 dark:text-green-200">
             <strong>Exile Metrics is completely free to use and will always remain so.</strong>
@@ -134,18 +131,12 @@ import { RouterLink } from 'vue-router'
           hours.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 pt-4">
-          <RouterLink
-            to="/contact"
-            class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-          >
+          <RouterLink to="/contact"
+            class="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
             Contact Us
           </RouterLink>
-          <a
-            href="https://github.com/alexmarin86/exile-metrics"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center justify-center px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors"
-          >
+          <a href="https://github.com/alexmarin86/exile-metrics" target="_blank" rel="noopener noreferrer"
+            class="inline-flex items-center justify-center px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors">
             View on GitHub
           </a>
         </div>
